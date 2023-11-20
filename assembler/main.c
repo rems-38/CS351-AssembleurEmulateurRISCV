@@ -1,4 +1,5 @@
 #include "function.h"
+#include <string.h>
 
 int main(int argc, char **argv)
 {
@@ -19,10 +20,19 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    char **tab = parse_string("addi x1, x0, 0x1");
+    size_t ch = 0;
+    size_t bufsize = 32;
+    char *line = (char *)malloc(bufsize * sizeof(char));
+    char **tab = NULL;
 
-    for(int i = 0; i < 4; i++) {
-        printf("%s\n", tab[i]);
+    while ((ch = getline(&line, &bufsize, finput)) != (size_t)EOF) {
+        if (*line != '#') {
+            tab = parse_string(line);
+            
+            for(size_t i = 0; i < strlen(*tab); i++) {
+                printf("%s\n", tab[i]);
+            }
+        }
     }
 
 
