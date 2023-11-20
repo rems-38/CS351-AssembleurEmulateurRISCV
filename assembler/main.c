@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include "function.h"
 
 int main(int argc, char **argv)
 {
@@ -13,6 +13,17 @@ int main(int argc, char **argv)
 
     FILE *finput = fopen(asm_input_file, "r");
     FILE *foutput = fopen(hex_output_file, "w");
+
+    if(finput == NULL) {
+        printf("Error: could not open file %s\n", asm_input_file);
+        return 1;
+    }
+
+    char **tab = parse_string("addi x1, x0, 0x1");
+
+    for(int i = 0; i < 4; i++) {
+        printf("%s\n", tab[i]);
+    }
 
 
     fclose(finput);
