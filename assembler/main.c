@@ -1,8 +1,9 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "function.h"
-#include <string.h>
+#include "const.h"
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     /* ./riscv-assembler <ASSEMBLER INPUT> <HEX OUTPUT> */
     if(argc != 3) {
         printf("usage: ./riscv-assembler <ASSEMBLER INPUT> <HEX OUTPUT>\n");
@@ -26,15 +27,20 @@ int main(int argc, char **argv)
     char **tab = NULL;
 
     while ((ch = getline(&line, &bufsize, finput)) != (size_t)EOF) {
-        if (*line != '#') {
+        if (*line != '#' && *line != ' ' && *line != '\n') {
             tab = parse_string(line);
-            
-            for(size_t i = 0; i < strlen(*tab); i++) {
-                printf("%s\n", tab[i]);
+            char **infos = get_infos(tab[0], types);
+
+            for (int i = 0; i < 4; i++) printf("%s ", infos[i]);
+            printf("\n");
+
+            // Libération de la mémoire
+            for (int i = 0; i < 4; i++) {
+                free(infos[i]);
             }
+            free(infos);
         }
     }
-
 
     fclose(finput);
     fclose(foutput);
