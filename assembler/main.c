@@ -34,6 +34,7 @@ int main(int argc, char **argv) {
         if (*line != '#' && *line != ' ' && *line != '\n') {
             tab = parse_string(line);
             infos = get_infos(tab[0], types);
+            output = 0;
 
             if (strcmp(infos[0], "R") == 0) {
                 printf("R\n");

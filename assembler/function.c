@@ -60,7 +60,7 @@ char **get_infos(char *str, char *types[10][5]) {
 void write_output(char *data, uint32_t *output, int start, int length) {
     int j = 0;
     for (int i = start; i < length; i++) {
-        *output += 2^i * data[j];
+        *output |= ((data[j] & 1) << i);
         j++;
     }
 }
