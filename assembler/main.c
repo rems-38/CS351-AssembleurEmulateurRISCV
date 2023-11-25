@@ -41,24 +41,46 @@ int main(int argc, char **argv) {
 
             // Func3 (de partout sauf pour les J)
             if (strcmp(infos[0], "J") != 0) write_output(infos[2], &output, 12, 3);
-            
+
+            /* NB : imm encoded 2's complement                                      ❌
+                    J instr: imm encode also signed offset in multiple of 2 bytes   ❌
+                    B & J instr: imm[0] is always 0 -> removed from encoding        ❌ 
+            */
+
             if (strcmp(infos[0], "R") == 0) {
+                // Working status : OK
                 write_output(infos[3], &output, 25, 7); // func7
                 write_output(to_bin(find_registrer(tab[1], registres), 5), &output, 7, 5); // rd
                 write_output(to_bin(find_registrer(tab[2], registres), 5), &output, 15, 5); // rs1
                 write_output(to_bin(find_registrer(tab[3], registres), 5), &output, 20, 5); // rs2
             } else if (strcmp(infos[0], "I") == 0) {
+                // Working status : OK (except for imm 2's complement)
                 write_output(to_bin(find_registrer(tab[1], registres), 5), &output, 7, 5); // rd
                 write_output(to_bin(find_registrer(tab[2], registres), 5), &output, 15, 5); // rs1
                 write_output(to_bin(atoi(tab[3]), 12), &output, 20, 12); // imm
             } else if (strcmp(infos[0], "S") == 0) {
                 printf("S\n");
             } else if (strcmp(infos[0], "B") == 0) {
-                printf("B\n");
+                write_output(to_bin(find_registrer(tab[1], registres), 5), &output, 15, 5); // rs1
+                write_output(to_bin(find_registrer(tab[2], registres), 5), &output, 20, 5); // rs2
+                
+                // Working status : not verified
+                char *imm = to_bin(atoi(tab[2]), 12);
+                write_output(imm+10, &output, 7, 1); // imm[11]
+                write_output(imm+0, &output, 8, 4); // imm[4:1]
+                write_output(imm+4, &output, 25, 6); // imm[10:5]
+                write_output(imm+11, &output, 31, 1); // imm[12]
             } else if (strcmp(infos[0], "J") == 0) {
-                printf("J\n");
+                write_output(to_bin(find_registrer(tab[1], registres), 5), &output, 7, 5); // rd
+
+                // Working status : not verified
+                char *imm = to_bin(atoi(tab[2]), 20);
+                write_output(imm+11, &output, 12, 8); // imm[19:12]
+                write_output(imm+10, &output, 13, 1); // imm[11]
+                write_output(imm+0, &output, 14, 10); // imm[10:1]
+                write_output(imm+19, &output, 31, 1); // imm[20]
             } else {
-                printf("Unknown instruction : %s\n", infos[0]);
+                printf("Unknown instruction : '%s'\n", infos[0]);
             }
 
             // Libération de la mémoire
