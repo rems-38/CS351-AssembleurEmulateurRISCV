@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdint.h>
 #include "function.h"
 
 char **parse_string(char *str) {
@@ -55,3 +56,11 @@ char **get_infos(char *str, char *types[10][5]) {
 
     return infos;
 } 
+
+void write_output(char *data, uint32_t *output, int start, int length) {
+    int j = 0;
+    for (int i = start; i < length; i++) {
+        *output += 2^i * data[j];
+        j++;
+    }
+}

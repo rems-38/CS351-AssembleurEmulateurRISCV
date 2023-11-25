@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
 #include "function.h"
 #include "const.h"
 
@@ -25,20 +27,41 @@ int main(int argc, char **argv) {
     size_t bufsize = 32;
     char *line = (char *)malloc(bufsize * sizeof(char));
     char **tab = NULL;
+    char **infos = NULL;
+    uint32_t output = 0;
 
     while ((ch = getline(&line, &bufsize, finput)) != (size_t)EOF) {
         if (*line != '#' && *line != ' ' && *line != '\n') {
             tab = parse_string(line);
-            char **infos = get_infos(tab[0], types);
+            infos = get_infos(tab[0], types);
 
-            for (int i = 0; i < 4; i++) printf("%s ", infos[i]);
-            printf("\n");
+            if (strcmp(infos[0], "R") == 0) {
+                printf("R\n");
+            } else if (strcmp(infos[0], "I") == 0) {
+                
+                printf("%d\n", output);
+                write_output(infos[1], &output, 0, 7);
+                printf("%d\n", output);
+                write_output(infos[2], &output, 12, 3);
+                printf("%d\n", output);
+
+            } else if (strcmp(infos[0], "S") == 0) {
+                printf("S\n");
+            } else if (strcmp(infos[0], "B") == 0) {
+                printf("B\n");
+            } else if (strcmp(infos[0], "J") == 0) {
+                printf("J\n");
+            } else {
+                printf("Unknown instruction : %s\n", infos[0]);
+            }
 
             // Libération de la mémoire
             for (int i = 0; i < 4; i++) {
                 free(infos[i]);
             }
             free(infos);
+
+            fprintf(foutput, "%x\n", output);
         }
     }
 
