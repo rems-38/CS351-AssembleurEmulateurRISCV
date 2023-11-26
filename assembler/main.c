@@ -53,23 +53,25 @@ int main(int argc, char **argv) {
            */
 
             if (strcmp(infos[0], "R") == 0) {
-                // Working status : OK
                 write_output(infos[3], &output, 25, 7); // func7
                 write_output(to_bin(find_registrer(tab[1], registres), 5), &output, 7, 5); // rd
                 write_output(to_bin(find_registrer(tab[2], registres), 5), &output, 15, 5); // rs1
                 write_output(to_bin(find_registrer(tab[3], registres), 5), &output, 20, 5); // rs2
             } else if (strcmp(infos[0], "I") == 0) {
-                // Working status : OK (except for imm 2's complement)
                 write_output(to_bin(find_registrer(tab[1], registres), 5), &output, 7, 5); // rd
                 write_output(to_bin(find_registrer(tab[2], registres), 5), &output, 15, 5); // rs1
                 write_output(to_bin(atoi(tab[3]), 12), &output, 20, 12); // imm
             } else if (strcmp(infos[0], "S") == 0) {
-                printf("S\n");
+                write_output(to_bin(find_registrer(tab[1], registres), 5), &output, 20, 5); // rs2
+                write_output(to_bin(find_registrer(tab[2], registres), 5), &output, 15, 5); // rs1
+
+                char *imm = flip(to_bin(atoi(tab[3]), 12), 12);
+                write_output(flip(imm, 5), &output, 7, 5); // imm[4:0]
+                write_output(flip(imm+5, 7), &output, 25, 7); // imm[11:5]
             } else if (strcmp(infos[0], "B") == 0) {
                 write_output(to_bin(find_registrer(tab[1], registres), 5), &output, 15, 5); // rs1
                 write_output(to_bin(find_registrer(tab[2], registres), 5), &output, 20, 5); // rs2
                 
-                // Working status : OK (except for imm 2's complement)
                 char *imm = flip(to_bin(atoi(tab[3]), 12), 12);
                 write_output(imm+11, &output, 7, 1); // imm[11]
                 write_output(flip(imm+1, 4), &output, 8, 4); // imm[4:1]
@@ -78,7 +80,6 @@ int main(int argc, char **argv) {
             } else if (strcmp(infos[0], "J") == 0) {
                 write_output(to_bin(find_registrer(tab[1], registres), 5), &output, 7, 5); // rd
 
-                // Working status : OK (except for imm 2's complement)
                 char *imm = flip(to_bin(atoi(tab[2]), 20), 20);
                 write_output(flip(imm+12, 8), &output, 12, 8); // imm[19:12]
                 write_output(imm+11, &output, 20, 1); // imm[11]

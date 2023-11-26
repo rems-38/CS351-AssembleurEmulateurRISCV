@@ -6,7 +6,7 @@ char **parse_string(char *str) {
     // Comptage du nombre d'élements
     int nb_word = 0;
     for(int i = 0; *(str + i) != '\0'; i++) {
-        if(*(str + i) == ' ' || *(str + i) == ',') {
+        if(*(str + i) == ' ' || *(str + i) == ',' || *(str + i) == '(' || *(str + i) == ')') {
             if(*(str + i + 1) != ' ') {
                 i++;
             }
@@ -15,24 +15,37 @@ char **parse_string(char *str) {
     }
 
     // Allocation de la mémoire
-    char **tab = malloc((nb_word + 1) * sizeof(char *));
-    for(int i = 0; i < nb_word + 1; i++) {
+    char **tab = malloc((nb_word) * sizeof(char *));
+    for(int i = 0; i < nb_word; i++) {
         tab[i] = malloc(10 * sizeof(char));
     }
 
     // Remplissage du tableau
     int j = 0;
     int k = 0;
+    int inversion = 0;
     for(int i = 0; *(str + i) != '\0'; i++) {
-        if(*(str + i) == ' ' || *(str + i) == ',' || *(str + i) == '\n') {
+        if(*(str + i) == ' ' || *(str + i) == ',' || *(str + i) == '\n' || *(str + i) == '(') {
+            if (*(str + i) == '(') inversion = 1; // pour après
             *(tab[j] + k) = '\0';
-            if (*(str + i + 1) == ' ') i++;
+            if (*(str + i + 1) == ' ') i++; // pour ", "
+            j++;
+            k = 0;
+        } else if(*(str + i) == ')') {
+            *(tab[j] + k) = '\0';
             j++;
             k = 0;
         } else {
             *(tab[j] + k) = *(str + i);
             k++;
         }
+    }
+
+    // Inversion des deux derniers élements (si on a vu des parantheses, c'est un cas particulier (offset...))
+    if (inversion) {
+        char *tmp = tab[j-2]; // On prend j-2 car j=5 à la fin et dernier = tab[3] 
+        tab[j-2] = tab[j-3];
+        tab[j-3] = tmp;
     }
 
     return tab;
@@ -69,6 +82,7 @@ void write_output(char *data, uint32_t *output, int start, int length) {
 
 int find_registrer(char *str, char *registres[32]) {
     for (int i = 0; i < 32; i++) {
+        // printf("%s %s\n", str, registres[i]);
         if (strcmp(str, registres[i]) == 0) {
             return i;
         }
