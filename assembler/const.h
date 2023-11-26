@@ -16,13 +16,6 @@ char *registres[32] = {"zero", "ra", "sp", "gp", "tp", "t0", "t1", "t2", "s0", "
                         "a3", "a4", "a5", "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9",
                         "s10", "s11", "t3", "t4", "t5", "t6"};
 
-/*
-0 : R
-1 : I
-2 : S
-3 : B
-4 : J
-*/
 int instr_format[5][8][3] = {
     {{0, -1, -1}, {7, 5, -1}, {15, 5, -1}, {20, 5, -1}, {-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}},
     {{1, 1, -1}, {7, 5, -1}, {15, 5, -1}, {20, 12, 0}, {-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}},
@@ -32,7 +25,7 @@ int instr_format[5][8][3] = {
 };
 
 /*
-Explication instr_format
+Explication instr_format (R:0, I:1, S:2, B:3, J:4)
 {
     {si imm ou pas, nombre de "partitionnement", -1},
     {start, length, -1}, 1er paramètre

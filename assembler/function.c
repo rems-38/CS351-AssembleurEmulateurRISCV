@@ -89,9 +89,7 @@ void write_output(char *data, uint32_t *output, int start, int length) {
 
 int find_registrer(char *str, char *registres[32]) {
     for (int i = 0; i < 32; i++) {
-        if (strcmp(str, registres[i]) == 0) {
-            return i;
-        }
+        if (strcmp(str, registres[i]) == 0) return i;
     }
     return 0;
 }
@@ -99,27 +97,14 @@ int find_registrer(char *str, char *registres[32]) {
 char *to_bin(int n, int length) {
     char *str = malloc(length+1 * sizeof(char));
     str[length] = '\0';
-
-    for (int i = length-1; i >= 0; --i, n >>= 1) {
-        str[i] = (n & 1) + '0';
-    }
-
+    for (int i = length-1; i >= 0; --i, n >>= 1) str[i] = (n & 1) + '0';
     return str;
 }
 
 char *flip(char *str, int length) {
     char *new_str = malloc(length * sizeof(char));
-    for (int i = 0; i < length; i++) {
-        new_str[i] = str[(length-1)-i];
-    }
+    for (int i = 0; i < length; i++) new_str[i] = str[(length-1)-i];
     return new_str;
-}
-
-void print_bin(uint32_t n) {
-    for (int i = 31; i >= 0; i--) {
-        printf("%d", (n >> i) & 1);
-    }
-    printf("\n");
 }
 
 void pseudo_replace(char **tab, char **infos, char *types[13][5]) {
@@ -147,8 +132,7 @@ void instr_parsing(char **tab, char **infos, uint32_t *output, char *registres[3
         B & J instr: imm[0] is always 0 -> removed from encoding        ✅ 
     */
     
-    // Ecriture de l'opcode (toujours en 1er)
-    write_output(infos[1], output, 0, 7);
+    write_output(infos[1], output, 0, 7); // opcode (always same pos)
 
     if (strcmp(infos[0], "4") != 0) write_output(infos[2], output, 12, 3); // func3 (de partout sauf pour les J)
     if (strcmp(infos[0], "0") == 0) write_output(infos[3], output, 25, 7); // func7 (que pour les R)
