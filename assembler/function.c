@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include "function.h"
 
-char **parse_string(char *str) {
+char **parse_string(char *str, int *nb_word) {
     // Comptage du nombre d'élements
     // int nb_word = 0;
     // for(int i = 0; *(str + i) != '\0'; i++) {
@@ -20,11 +20,11 @@ char **parse_string(char *str) {
         -> realloc ??
     + le comptage était bizarre (1 ou 2 en trop jsp)
     */
-    int nb_word = 5;
+    *nb_word = 5;
 
     // Allocation de la mémoire
-    char **tab = malloc(nb_word * sizeof(char *));
-    for(int i = 0; i < nb_word; i++) {
+    char **tab = malloc(*nb_word * sizeof(char *));
+    for(int i = 0; i < *nb_word; i++) {
         tab[i] = malloc(10 * sizeof(char)); // On suppose que 10 est suffisant (supposition max : 7 => imm value max 2^20 => 1048576) <- à vérif
     }
 
@@ -140,7 +140,7 @@ void pseudo_replace(char **tab, char **infos, char *types[13][5]) {
     infos = get_infos(tab[0], types); // Udpate infos data
 }
 
-void instr_parsing(char **tab, char **infos, uint32_t *output, char *registres[32]) {
+void instr_parsing(char **tab, char **infos, uint32_t *output, char *registres[32], int instr_format[5][8][3]) {
     /* NB :
         imm encoded 2's complement                                      ❌
         J instr: imm encode also signed offset in multiple of 2 bytes   ❌
@@ -150,43 +150,23 @@ void instr_parsing(char **tab, char **infos, uint32_t *output, char *registres[3
     // Ecriture de l'opcode (toujours en 1er)
     write_output(infos[1], output, 0, 7);
 
-    // Func3 (de partout sauf pour les J)
-    if (strcmp(infos[0], "J") != 0) write_output(infos[2], output, 12, 3);
+    if (strcmp(infos[0], "4") != 0) write_output(infos[2], output, 12, 3); // func3 (de partout sauf pour les J)
+    if (strcmp(infos[0], "0") == 0) write_output(infos[3], output, 25, 7); // func7 (que pour les R)
 
-    if (strcmp(infos[0], "R") == 0) {
-        write_output(infos[3], output, 25, 7); // func7
-        write_output(to_bin(find_registrer(tab[1], registres), 5), output, 7, 5); // rd
-        write_output(to_bin(find_registrer(tab[2], registres), 5), output, 15, 5); // rs1
-        write_output(to_bin(find_registrer(tab[3], registres), 5), output, 20, 5); // rs2
-    } else if (strcmp(infos[0], "I") == 0) {
-        write_output(to_bin(find_registrer(tab[1], registres), 5), output, 7, 5); // rd
-        write_output(to_bin(find_registrer(tab[2], registres), 5), output, 15, 5); // rs1
-        write_output(to_bin(atoi(tab[3]), 12), output, 20, 12); // imm
-    } else if (strcmp(infos[0], "S") == 0) {
-        write_output(to_bin(find_registrer(tab[1], registres), 5), output, 20, 5); // rs2
-        write_output(to_bin(find_registrer(tab[2], registres), 5), output, 15, 5); // rs1
-
-        char *imm = flip(to_bin(atoi(tab[3]), 12), 12);
-        write_output(flip(imm, 5), output, 7, 5); // imm[4:0]
-        write_output(flip(imm+5, 7), output, 25, 7); // imm[11:5]
-    } else if (strcmp(infos[0], "B") == 0) {
-        write_output(to_bin(find_registrer(tab[1], registres), 5), output, 15, 5); // rs1
-        write_output(to_bin(find_registrer(tab[2], registres), 5), output, 20, 5); // rs2
-                
-        char *imm = flip(to_bin(atoi(tab[3]), 12), 12);
-        write_output(imm+11, output, 7, 1); // imm[11]
-        write_output(flip(imm+1, 4), output, 8, 4); // imm[4:1]
-        write_output(flip(imm+5, 6), output, 25, 6); // imm[10:5]
-        write_output(imm+12, output, 31, 1); // imm[12]
-    } else if (strcmp(infos[0], "J") == 0) {
-        write_output(to_bin(find_registrer(tab[1], registres), 5), output, 7, 5); // rd
-
-        char *imm = flip(to_bin(atoi(tab[2]), 20), 20);
-        write_output(flip(imm+12, 8), output, 12, 8); // imm[19:12]
-        write_output(imm+11, output, 20, 1); // imm[11]
-        write_output(flip(imm+1, 10), output, 21, 10); // imm[10:1]
-        write_output(imm+20, output, 31, 1); // imm[20]
-    } else {
-        printf("Unknown instruction : '%s'\n", infos[0]);
+    for (int i = 1; i <= 3; i++) {
+        if (instr_format[atoi(infos[0])][0][0] && i == 3) {
+            if (instr_format[atoi(infos[0])][i][0] == -1) {
+                if (strcmp(infos[0], "4") == 0) i--; // pour les J, imm est dans tab[2] donc on recule
+                char *imm = flip(to_bin(atoi(tab[i]), instr_format[atoi(infos[0])][i][1]), instr_format[atoi(infos[0])][i][1]);
+                for (int j = 4; j < 4+instr_format[atoi(infos[0])][0][1]; j++) {
+                    write_output(flip(imm+instr_format[atoi(infos[0])][j][2], instr_format[atoi(infos[0])][j][1]), output, instr_format[atoi(infos[0])][j][0], instr_format[atoi(infos[0])][j][1]);
+                }
+                if (strcmp(infos[0], "4") == 0) i++; // RAZ sinon boucle infinie
+            } else {
+                write_output(to_bin(atoi(tab[i]), instr_format[atoi(infos[0])][i][1]), output, instr_format[atoi(infos[0])][i][0], instr_format[atoi(infos[0])][i][1]);
+            }
+        } else {
+            write_output(to_bin(find_registrer(tab[i], registres), instr_format[atoi(infos[0])][i][1]), output, instr_format[atoi(infos[0])][i][0], instr_format[atoi(infos[0])][i][1]);
+        }
     }
 }

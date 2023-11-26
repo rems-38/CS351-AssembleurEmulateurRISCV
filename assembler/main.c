@@ -34,20 +34,22 @@ int main(int argc, char **argv) {
     char **tab = NULL;
     char **infos = NULL;
     uint32_t output = 0;
+    int nb_word = 0;
 
     while ((ch = getline(&line, &bufsize, finput)) != (size_t)EOF) {
         if (*line != '#' && *line != ' ' && *line != '\n') {
-            tab = parse_string(line);
+            tab = parse_string(line, &nb_word);
             infos = get_infos(tab[0], types);
             output = 0;
 
             if (strcmp(infos[0], "P") == 0) pseudo_replace(tab, infos, types);
-            instr_parsing(tab, infos, &output, registres);
+            instr_parsing(tab, infos, &output, registres, instr_format);
 
             // Libération de la mémoire
             for (int i = 0; i < 4; i++) free(infos[i]);
             free(infos);
-            // for (int i = 0; i < sizeof(tab); i++) free(tab[i]); // problèmes avec la size
+            for (int i = 0; i < nb_word; i++) free(tab[i]);
+            nb_word = 0;
             free(tab);
             // /!\ Il manque surement des free()
 
