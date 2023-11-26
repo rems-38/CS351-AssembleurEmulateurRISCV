@@ -86,3 +86,18 @@ char *to_bin(int n, int length) {
 
     return str;
 }
+
+char *flip(char *str, int length) {
+    char *new_str = malloc(length * sizeof(char));
+    for (int i = 0; i < length; i++) {
+        new_str[i] = str[(length-1)-i];
+    }
+    return new_str;
+}
+
+void print_bin(uint32_t n) {
+    for (int i = 31; i >= 0; i--) {
+        printf("%d", (n >> i) & 1);
+    }
+    printf("\n");
+}

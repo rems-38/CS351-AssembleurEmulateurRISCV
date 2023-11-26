@@ -44,8 +44,13 @@ int main(int argc, char **argv) {
 
             /* NB : imm encoded 2's complement                                      ❌
                     J instr: imm encode also signed offset in multiple of 2 bytes   ❌
-                    B & J instr: imm[0] is always 0 -> removed from encoding        ❌ 
+                    B & J instr: imm[0] is always 0 -> removed from encoding        ✅ 
             */
+
+           /* RISCV Instruction To Hex (and Bin) Converter :
+                - https://luplab.gitlab.io/rvcodecjs/
+                - https://www.eg.bucknell.edu/~csci206/riscv-converter/index.html 
+           */
 
             if (strcmp(infos[0], "R") == 0) {
                 // Working status : OK
@@ -64,21 +69,21 @@ int main(int argc, char **argv) {
                 write_output(to_bin(find_registrer(tab[1], registres), 5), &output, 15, 5); // rs1
                 write_output(to_bin(find_registrer(tab[2], registres), 5), &output, 20, 5); // rs2
                 
-                // Working status : not verified
-                char *imm = to_bin(atoi(tab[2]), 12);
-                write_output(imm+10, &output, 7, 1); // imm[11]
-                write_output(imm+0, &output, 8, 4); // imm[4:1]
-                write_output(imm+4, &output, 25, 6); // imm[10:5]
-                write_output(imm+11, &output, 31, 1); // imm[12]
+                // Working status : OK (except for imm 2's complement)
+                char *imm = flip(to_bin(atoi(tab[3]), 12), 12);
+                write_output(imm+11, &output, 7, 1); // imm[11]
+                write_output(flip(imm+1, 4), &output, 8, 4); // imm[4:1]
+                write_output(flip(imm+5, 6), &output, 25, 6); // imm[10:5]
+                write_output(imm+12, &output, 31, 1); // imm[12]
             } else if (strcmp(infos[0], "J") == 0) {
                 write_output(to_bin(find_registrer(tab[1], registres), 5), &output, 7, 5); // rd
 
-                // Working status : not verified
-                char *imm = to_bin(atoi(tab[2]), 20);
-                write_output(imm+11, &output, 12, 8); // imm[19:12]
-                write_output(imm+10, &output, 13, 1); // imm[11]
-                write_output(imm+0, &output, 14, 10); // imm[10:1]
-                write_output(imm+19, &output, 31, 1); // imm[20]
+                // Working status : OK (except for imm 2's complement)
+                char *imm = flip(to_bin(atoi(tab[2]), 20), 20);
+                write_output(flip(imm+12, 8), &output, 12, 8); // imm[19:12]
+                write_output(imm+11, &output, 20, 1); // imm[11]
+                write_output(flip(imm+1, 10), &output, 21, 10); // imm[10:1]
+                write_output(imm+20, &output, 31, 1); // imm[20]
             } else {
                 printf("Unknown instruction : '%s'\n", infos[0]);
             }
