@@ -40,15 +40,15 @@ int main(int argc, char **argv) {
             infos = get_infos(tab[0], types);
             output = 0;
 
-            if (strcmp(infos[0], "P") == 0) pseudo_replace(tab, infos, types);
+            if (strcmp(infos[0], "P") == 0) pseudo_replace(tab, infos, types, &nb_word);
             instr_parsing(tab, infos, &output, registres, instr_format);
 
             // Libération de la mémoire
             for (int i = 0; i < 4; i++) free(infos[i]);
             free(infos);
             for (int i = 0; i < nb_word; i++) free(tab[i]);
-            nb_word = 0;
             free(tab);
+            nb_word = 0;
             // /!\ Il manque surement des free()
 
             fprintf(foutput, "%08x\n", output);

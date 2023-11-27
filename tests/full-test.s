@@ -1,17 +1,18 @@
-add a0, a1, a2
-sub t1, t0, t1
-addi a1, zero, 20
-ld t0, 8(t6)
-sd a5, 8(s10)
-beq a5, t1, 8
-bne ra, zero, 4
-blt gp, s4, 4
-bge sp, s7, 16
-jal zero, 256
-j 128
-li t4, 25
-mv t3, a0
+#add a0, a1, a2
+#sub t1, t0, t1
+#addi a1, zero, 20
+#ld t0, 8(t6)
+#sd a5, 8(s10)
+#beq a5, t1, 8
+#bne ra, zero, 4
+#blt gp, s4, 4
+#bge sp, s7, 16
+#jal zero, 256
+#j 128
+#li t4, 25
+#mv t3, a0
 
+bge sp, s7, -16
 
 # EXPECTED (assembling part only)
 # 00c58533
@@ -27,3 +28,12 @@ mv t3, a0
 # 0800006f
 # 01900e93
 # 00050e13
+
+# ff7158e3
+# 7f715fe3
+# 7f7158e3
+
+# 1 111111 10111 00010 101 1000 1 1100011
+# 0 111111 10111 00010 101 1111 1 1100011
+
+# 0111111111110

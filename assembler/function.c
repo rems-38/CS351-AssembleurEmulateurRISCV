@@ -29,8 +29,7 @@ char **parse_string(char *str, int *nb_word) {
     }
 
     // Remplissage du tableau
-    int j = 0;
-    int k = 0;
+    int j = 0, k = 0;
     int inversion = 0;
     for(int i = 0; *(str + i) != '\0'; i++) {
         if(*(str + i) == ' ' || *(str + i) == ',' || *(str + i) == '\n' || *(str + i) == '(') {
@@ -39,7 +38,7 @@ char **parse_string(char *str, int *nb_word) {
             if (*(str + i + 1) == ' ') i++; // pour ", "
             j++;
             k = 0;
-        } else if(*(str + i) == ')') {
+        } else if (*(str + i) == ')') {
             *(tab[j] + k) = '\0';
             j++;
             k = 0;
@@ -67,13 +66,10 @@ char **get_infos(char *str, char *types[13][5]) {
 
     for (int i = 0; i < 13; i++) {
         if (strcmp(str, types[i][0]) == 0) {
-            strcpy(infos[0], types[i][1]);
-            strcpy(infos[1], types[i][2]);
-            if (types[i][3] != NULL) strcpy(infos[2], types[i][3]);
-            else infos[2] = NULL; // NULL est pas un char* donc strcpy seg fault 
-            if (types[i][4] != NULL) strcpy(infos[3], types[i][4]);
-            else infos[3] = NULL;
-
+            for (int j = 0; j < 4; j++) {
+                if (types[i][j+1] != NULL) strcpy(infos[j], types[i][j+1]);
+                else infos[j] = NULL; // NULL est pas un char* donc strcpy seg fault 
+            }
             break;
         }
     }
@@ -97,7 +93,17 @@ int find_registrer(char *str, char *registres[32]) {
 char *to_bin(int n, int length) {
     char *str = malloc(length+1 * sizeof(char));
     str[length] = '\0';
+    int inverted = 0;
+    if (n < 0){
+        int tmp_n = 1;
+        inverted = 1;
+        for (int i = 0; i < length; i++) tmp_n *= 2;
+        n = tmp_n - abs(n);
+        // complément a 2 => calcul de 2^(longueur) - |n| et on mets en binaire
+    }
     for (int i = length-1; i >= 0; --i, n >>= 1) str[i] = (n & 1) + '0';
+    if (inverted) flip(str, length);
+
     return str;
 }
 
@@ -107,7 +113,10 @@ char *flip(char *str, int length) {
     return new_str;
 }
 
-void pseudo_replace(char **tab, char **infos, char *types[13][5]) {
+void pseudo_replace(char **tab, char **infos, char *types[13][5], int *nb_word) {
+    (*nb_word)++;
+    tab = realloc(tab, *nb_word * sizeof(char *));
+    
     if (strcmp(tab[0], "j") == 0) {
         strcpy(tab[2], tab[1]);
         strcpy(tab[1], "zero");
@@ -126,12 +135,6 @@ void pseudo_replace(char **tab, char **infos, char *types[13][5]) {
 }
 
 void instr_parsing(char **tab, char **infos, uint32_t *output, char *registres[32], int instr_format[5][8][3]) {
-    /* NB :
-        imm encoded 2's complement                                      ❌
-        J instr: imm encode also signed offset in multiple of 2 bytes   ❌
-        B & J instr: imm[0] is always 0 -> removed from encoding        ✅ 
-    */
-    
     write_output(infos[1], output, 0, 7); // opcode (always same pos)
 
     if (strcmp(infos[0], "4") != 0) write_output(infos[2], output, 12, 3); // func3 (de partout sauf pour les J)
