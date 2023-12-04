@@ -114,8 +114,8 @@ char *flip(char *str, int length) {
 }
 
 void pseudo_replace(char **tab, char **infos, char *types[13][5], int *nb_word) {
-    (*nb_word)++;
-    tab = realloc(tab, *nb_word * sizeof(char *));
+    // (*nb_word)++;
+    // tab = realloc(tab, *nb_word * sizeof(char *));
     
     if (strcmp(tab[0], "j") == 0) {
         strcpy(tab[2], tab[1]);
