@@ -93,22 +93,22 @@ int find_registrer(char *str, char *registres[32]) {
 char *to_bin(int n, int length) {
     char *str = malloc(length+1 * sizeof(char));
     str[length] = '\0';
-    int inverted = 0;
     if (n < 0){
         int tmp_n = 1;
-        inverted = 1;
         for (int i = 0; i < length; i++) tmp_n *= 2;
         n = tmp_n - abs(n);
         // complément a 2 => calcul de 2^(longueur) - |n| et on mets en binaire
     }
     for (int i = length-1; i >= 0; --i, n >>= 1) str[i] = (n & 1) + '0';
-    if (inverted) flip(str, length);
-
     return str;
 }
 
 char *flip(char *str, int length) {
     char *new_str = malloc(length * sizeof(char));
+    if (length == 1) {
+        return str;
+
+    } 
     for (int i = 0; i < length; i++) new_str[i] = str[(length-1)-i];
     return new_str;
 }
