@@ -17,7 +17,7 @@ Auteurs : Rémi MAZZONE et Calista ROUX
 * Comment avez-vous choisi de programmer l'analyse de texte (dont la lecture
 des opérandes entières) ? Comment identifiez-vous les noms de registres, des noms "jolis", des entiers ?
 
-[COMPLÉTER ICI]
+  Nous lisons ligne par lignes. Nous avons une première fonction qui vient enlever les virgules, les parenthèses et vient mettre chaque éléments de notre lignes dans un tableau. Par exemple, si nous avons " add a0, a1, a2", la fonction nous donne un tableau avec ["add", "a0, "a1", "a2"]. Nous avons ensuite créer un tableau dans le fichier const.h qui nous permet de connaître le type d'instruction avec les function 3 et 7. 
 
 * Avez-vous vu des motifs récurrents émerger ? Avez-vous "factorisé" ces motifs
 pour éviter de les répéter ? Si non, serait-ce difficile ?
