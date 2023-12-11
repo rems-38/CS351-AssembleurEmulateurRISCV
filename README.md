@@ -35,9 +35,9 @@ documentation fournie sur l'encodage des instructions RISC-V ?
 [COMPLÉTER ICI]
 
 * Cochez (en remplaçant `[ ]` par `[x]`) si vous avez :
-  - [ ] Implémenté la traduction pour toutes les instructions de la documentation
-  - [ ] Pris en compte les cas particuliers comme les valeurs immédiates négatives et le bit manquant dans l'encodage de `jal`
-  - [ ] Écrit du code de gestion d'erreur pour que le programme ait une réaction propre si le code assembleur est invalide _(pas demandé par le sujet)_
+  - [X] Implémenté la traduction pour toutes les instructions de la documentation
+  - [X] Pris en compte les cas particuliers comme les valeurs immédiates négatives et le bit manquant dans l'encodage de `jal`
+  - [X] Écrit du code de gestion d'erreur pour que le programme ait une réaction propre si le code assembleur est invalide _(pas demandé par le sujet)_
 
 
 ## Rendu 3

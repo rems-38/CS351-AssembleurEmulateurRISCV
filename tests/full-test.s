@@ -15,6 +15,11 @@ mv t3, a0
 bge sp, s7, -16
 jal zero, -64
 
+adid a1, zero, 45
+addi fd, zero, 45
+addi a1, zero, ab
+bne ra, zero, toto
+
 # EXPECTED (assembling part only)
 # 00c58533
 # 40628333
@@ -32,3 +37,8 @@ jal zero, -64
 
 # ff7158e3
 # fc1ff06f
+
+# 00000000
+# 00000000
+# 00000000
+# 00000000

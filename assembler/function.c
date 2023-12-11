@@ -64,14 +64,20 @@ char **get_infos(char *str, char *types[13][5]) {
         infos[i] = malloc(7 * sizeof(char)); // Au plus une string de 7 bits (opcode)
     }
 
+    int iGetIt = 0;
     for (int i = 0; i < 13; i++) {
         if (strcmp(str, types[i][0]) == 0) {
             for (int j = 0; j < 4; j++) {
                 if (types[i][j+1] != NULL) strcpy(infos[j], types[i][j+1]);
                 else infos[j] = NULL; // NULL est pas un char* donc strcpy seg fault 
             }
+            iGetIt = 1;
             break;
         }
+    }
+    if (!iGetIt) {
+        printf("Error: instruction %s not found\n", str);
+        infos[0] = NULL;
     }
 
     return infos;
@@ -85,9 +91,10 @@ void write_output(char *data, uint32_t *output, int start, int length) {
 
 int find_registrer(char *str, char *registres[32]) {
     for (int i = 0; i < 32; i++) {
-        if (strcmp(str, registres[i]) == 0) return i;
+        if (strcmp(str, registres[i]) == 0) { return i; }
     }
-    return 0;
+    printf("Error: registrer %s not found\n", str);
+    return -1;
 }
 
 char *to_bin(int n, int length) {
@@ -143,17 +150,44 @@ void instr_parsing(char **tab, char **infos, uint32_t *output, char *registres[3
     for (int i = 1; i <= 3; i++) {
         if (instr_format[atoi(infos[0])][0][0] && i == 3) {
             if (instr_format[atoi(infos[0])][i][0] == -1) {
+                
                 if (strcmp(infos[0], "4") == 0) i--; // pour les J, imm est dans tab[2] donc on recule
-                char *imm = flip(to_bin(atoi(tab[i]), instr_format[atoi(infos[0])][i][1]), instr_format[atoi(infos[0])][i][1]);
-                for (int j = 4; j < 4+instr_format[atoi(infos[0])][0][1]; j++) {
-                    write_output(flip(imm+instr_format[atoi(infos[0])][j][2], instr_format[atoi(infos[0])][j][1]), output, instr_format[atoi(infos[0])][j][0], instr_format[atoi(infos[0])][j][1]);
+                
+                if ((tab[i][0] >= 48 && tab[i][0] <= 57)|| tab[i][0] == '-') {
+    
+                    char *imm = flip(to_bin(atoi(tab[i]), instr_format[atoi(infos[0])][i][1]), instr_format[atoi(infos[0])][i][1]);
+                    for (int j = 4; j < 4+instr_format[atoi(infos[0])][0][1]; j++) {
+                        write_output(flip(imm+instr_format[atoi(infos[0])][j][2], instr_format[atoi(infos[0])][j][1]), output, instr_format[atoi(infos[0])][j][0], instr_format[atoi(infos[0])][j][1]);
+                    }
+    
                 }
-                if (strcmp(infos[0], "4") == 0) i++; // RAZ sinon boucle infinie
+                else {
+                    printf("Error: %s is not a number\n", tab[i]);
+                    *output = 0;
+                    return;
+                }
+
+                if (strcmp(infos[0], "4") == 0) i++; // RAZ sinon boucle infinie    
+                
+                
             } else {
-                write_output(to_bin(atoi(tab[i]), instr_format[atoi(infos[0])][i][1]), output, instr_format[atoi(infos[0])][i][0], instr_format[atoi(infos[0])][i][1]);
+                if ((tab[i][0] >= 48 && tab[i][0] <= 57) || tab[i][0] == '-') {
+                    write_output(to_bin(atoi(tab[i]), instr_format[atoi(infos[0])][i][1]), output, instr_format[atoi(infos[0])][i][0], instr_format[atoi(infos[0])][i][1]);
+                }
+                else {
+                    printf("Error: %s is not a number\n", tab[i]);
+                    *output = 0;
+                    return;
+                }
             }
         } else {
-            write_output(to_bin(find_registrer(tab[i], registres), instr_format[atoi(infos[0])][i][1]), output, instr_format[atoi(infos[0])][i][0], instr_format[atoi(infos[0])][i][1]);
+            if (strcmp(infos[0], "4") == 0 && i == 2) { continue; }
+            else {
+                if (find_registrer(tab[i], registres) == -1) {*output = 0; return; } 
+                else {
+                    write_output(to_bin(find_registrer(tab[i], registres), instr_format[atoi(infos[0])][i][1]), output, instr_format[atoi(infos[0])][i][0], instr_format[atoi(infos[0])][i][1]);
+                }
+            }
         }
     }
 }
