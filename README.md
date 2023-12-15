@@ -32,7 +32,9 @@ pour éviter de les répéter ? Si non, serait-ce difficile ?
 * Comment avez-vous procédé pour écrire les tests ? Étes-vous confiant·e·s que
 toutes les instructions gérées et tous les types d'arguments sont couverts ?
 
-  - Pour nos tests, nous avons créé deux fichiers tests : [full-test.s](assembler/full-test.s) et [.error_gestion.s](assembler/.error_gestion.s). Dans [full-test.s](assembler/full-test.s), nous avons tous les tests possibles et **compilables**. Cela, nous permet de voir si toutes les instructions fonctionnent. Nous avons aussi créé des instructions avec des valeurs immédiates négatives. Pour la gestion des erreurs comme : la mauvaise écriture des instructions, des noms de registres invalides ou à la mauvaise place; ces tests se trouvent dans le fichier [.error_gestion.s](assembler/.error_gestion.s) (qui commence par un `.` de manière à ne pas être pris en compte par le `make test`).
+  - Pour nos tests, nous avons créé deux fichiers tests : [full-test.s](assembler/full-test.s) et [.error_gestion.s](assembler/.error_gestion.s). Dans [full-test.s](assembler/full-test.s), nous avons tous les tests possibles et **compilables**. Cela, nous permet de voir si toutes les instructions fonctionnent. Nous avons aussi créé des instructions avec des valeurs immédiates négatives.
+  
+  - Pour la gestion des erreurs comme : la mauvaise écriture des instructions, des noms de registres invalides ou à la mauvaise place; ces tests se trouvent dans le fichier [.error_gestion.s](assembler/.error_gestion.s) (qui commence par un `.` de manière à ne pas être pris en compte par le `make test`).
   Pour savoir si nos tests fonctionnent, nous les avons entrée sur [ce site](https://luplab.gitlab.io/rvcodecjs/) qui permet de connaître les valeurs hexadécimales et binaires des instructions. Nous avons stockés les valeurs dans le fichier en question en tant que commentaire. Nous les comparont ensuite avec nos résultats.
 
 * Quelle a été votre expérience avec l'utilisation et la compréhension de la
@@ -49,7 +51,7 @@ documentation fournie sur l'encodage des instructions RISC-V ?
   - [X] Pris en compte les cas particuliers comme les valeurs immédiates négatives et le bit manquant dans l'encodage de `jal`
   - [X] Écrit du code de gestion d'erreur pour que le programme ait une réaction propre si le code assembleur est invalide _(pas demandé par le sujet)_
 
-
+<!-- 
 ## Rendu 3
 
 Questions à remplir _avant_ de programmer l'émulateur (10 lignes sont conseillées à chaque fois pour bien y réfléchir) :
@@ -102,3 +104,4 @@ comparaisons et sauts ? La mémoire ?
 * Des retours sur le projet en général ?
 
 [COMPLÉTER ICI]
+-->
