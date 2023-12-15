@@ -90,11 +90,18 @@ void write_output(char *data, uint32_t *output, int start, int length) {
 }
 
 int find_registrer(char *str, char *registres[32]) {
+    char *buf = malloc(3 * sizeof(char));
+    int to_return = -1;
     for (int i = 0; i < 32; i++) {
-        if (strcmp(str, registres[i]) == 0) { return i; }
+        sprintf(buf, "x%d", i);
+        if (strcmp(str, buf) == 0) {to_return = i; break; }
+        else if (strcmp(str, registres[i]) == 0) { to_return = i; break; }
     }
-    printf("Error: registrer %s not found\n", str);
-    return -1;
+    if (to_return == -1) {
+        printf("Error: registrer %s not found\n", str);
+    }
+    free(buf);
+    return to_return;
 }
 
 char *to_bin(int n, int length) {

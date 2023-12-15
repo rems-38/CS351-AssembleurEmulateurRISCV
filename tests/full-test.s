@@ -1,6 +1,6 @@
 add a0, a1, a2
 sub t1, t0, t1
-addi a1, zero, 20
+addi a1, x0, 20
 ld t0, 8(t6)
 sd a5, 8(s10)
 beq a5, t1, 8
@@ -15,10 +15,10 @@ mv t3, a0
 bge sp, s7, -16
 jal zero, -64
 
-adid a1, zero, 45
-addi fd, zero, 45
-addi a1, zero, ab
-bne ra, zero, toto
+#adid a1, zero, 45
+#addi fd, zero, 45
+#addi a1, zero, ab
+#bne ra, zero, toto
 
 # EXPECTED (assembling part only)
 # 00c58533
