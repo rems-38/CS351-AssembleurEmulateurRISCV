@@ -15,11 +15,6 @@ mv t3, a0
 bge sp, s7, -16
 jal zero, -64
 
-#adid a1, zero, 45
-#addi fd, zero, 45
-#addi a1, zero, ab
-#bne ra, zero, toto
-
 # EXPECTED (assembling part only)
 # 00c58533
 # 40628333
