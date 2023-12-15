@@ -40,7 +40,9 @@ documentation fournie sur l'encodage des instructions RISC-V ?
 
   - Notre expérience avec la documentation fourni a été plutôt bonne. Comme toute documentation, il est nécessaire de prendre un temps pour comprendre comment elle fonctionne mais nous avons trouvé qu'elle était plutôt claire et bien expliqué
 
-  - 
+  - Le principe n'est pas très compliqué : il suffit de placer les bons élements au bon endroit ! La seule implémentation qui a demandé un peu plus de reflexion a été pour les valeurs immédiates car les bits sont séparés.
+
+  - Cependant cela n'a pas été longtemps une difficulté car grâce à notre fonction `write_output`, nous pouvons écrire un nombre de bits choisi à l'endroit où l'on souhaite parmi les 32. Tout repose donc sur de la configuration, c'est une des choses qui a été le plus long à mettre en place car il fallait que ça soit assez général mais pour autant spécifique, afin que tous les cas possibles soit traités. On a donc bien réfléchi afin de créer nos tableaux de la manière la plus efficace à notre sens.
    
 * Cochez (en remplaçant `[ ]` par `[x]`) si vous avez :
   - [X] Implémenté la traduction pour toutes les instructions de la documentation
