@@ -79,7 +79,6 @@ char **get_infos(char *str, char *types[13][5]) {
         printf("Error: instruction %s not found\n", str);
         infos[0] = NULL;
     }
-
     return infos;
 } 
 
@@ -97,9 +96,7 @@ int find_registrer(char *str, char *registres[32]) {
         if (strcmp(str, buf) == 0) {to_return = i; break; }
         else if (strcmp(str, registres[i]) == 0) { to_return = i; break; }
     }
-    if (to_return == -1) {
-        printf("Error: registrer %s not found\n", str);
-    }
+    if (to_return == -1) { printf("Error: registrer %s not found\n", str); }
     free(buf);
     return to_return;
 }
@@ -148,6 +145,11 @@ void pseudo_replace(char **tab, char **infos, char *types[13][5], int *nb_word) 
     infos = get_infos(tab[0], types); // Udpate infos data
 }
 
+void error(char *str, int *output) {
+    printf("Error: %s is not a number\n", str);
+    *output = 0;
+}
+
 void instr_parsing(char **tab, char **infos, uint32_t *output, char *registres[32], int instr_format[5][8][3]) {
     write_output(infos[1], output, 0, 7); // opcode (always same pos)
 
@@ -157,35 +159,20 @@ void instr_parsing(char **tab, char **infos, uint32_t *output, char *registres[3
     for (int i = 1; i <= 3; i++) {
         if (instr_format[atoi(infos[0])][0][0] && i == 3) {
             if (instr_format[atoi(infos[0])][i][0] == -1) {
-                
                 if (strcmp(infos[0], "4") == 0) i--; // pour les J, imm est dans tab[2] donc on recule
-                
                 if ((tab[i][0] >= 48 && tab[i][0] <= 57)|| tab[i][0] == '-') {
-    
                     char *imm = flip(to_bin(atoi(tab[i]), instr_format[atoi(infos[0])][i][1]), instr_format[atoi(infos[0])][i][1]);
                     for (int j = 4; j < 4+instr_format[atoi(infos[0])][0][1]; j++) {
                         write_output(flip(imm+instr_format[atoi(infos[0])][j][2], instr_format[atoi(infos[0])][j][1]), output, instr_format[atoi(infos[0])][j][0], instr_format[atoi(infos[0])][j][1]);
                     }
-    
                 }
-                else {
-                    printf("Error: %s is not a number\n", tab[i]);
-                    *output = 0;
-                    return;
-                }
-
-                if (strcmp(infos[0], "4") == 0) i++; // RAZ sinon boucle infinie    
-                
-                
+                else { error(tab[i], output); return; }
+                if (strcmp(infos[0], "4") == 0) i++; // RAZ sinon boucle infinie                
             } else {
                 if ((tab[i][0] >= 48 && tab[i][0] <= 57) || tab[i][0] == '-') {
                     write_output(to_bin(atoi(tab[i]), instr_format[atoi(infos[0])][i][1]), output, instr_format[atoi(infos[0])][i][0], instr_format[atoi(infos[0])][i][1]);
                 }
-                else {
-                    printf("Error: %s is not a number\n", tab[i]);
-                    *output = 0;
-                    return;
-                }
+                else { error(tab[i], output); return; }
             }
         } else {
             if (strcmp(infos[0], "4") == 0 && i == 2) { continue; }

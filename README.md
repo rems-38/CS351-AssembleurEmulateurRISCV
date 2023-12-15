@@ -12,28 +12,36 @@ Auteurs : Rémi MAZZONE et Calista ROUX
 
 ## Rendu 2
 
-(Une dizaine de lignes devrait suffire à chaque fois)
-
 * Comment avez-vous choisi de programmer l'analyse de texte (dont la lecture
 des opérandes entières) ? Comment identifiez-vous les noms de registres, des noms "jolis", des entiers ?
 
-  Pour l'analyse du texte, nous lisons ligne par lignes. Nous avons une première fonction qui vient enlever les virgules, les parenthèses et vient mettre chaque éléments de notre ligne dans un tableau. Par exemple, si nous avons " add a0, a1, a2", la fonction nous donne un tableau avec ["add", "a0, "a1", "a2"]. Nous avons ensuite créer un tableau dans le fichier const.h qui nous permet de connaître le type d'instruction avec les functions 3 et 7. 
+  - Pour l'analyse du texte, nous lisons ligne par lignes. Nous avons la fonction `parse_string` qui vient enlever les virgules, les parenthèses et vient mettre chaque éléments de notre ligne dans un tableau. Par exemple, si nous avons `add a0, a1, a2`, la fonction nous donne un tableau avec `["add", "a0, "a1", "a2"]`.
+  
+  - Pour l'identification des nom des registres, nous avons, dans notre fichier [const.h](assembler/const.h#L15), fait un tableau (`registres`) avec tous les noms "jolis" des registres. Nous avons créé la fonction `find_register` qui va comparer ce tableau avec notre nom de registre ou simplement le comparer avec la chaine de caractère des noms de registre.
+  
+  - Pour la différentiation des noms de registres des valeurs immédiates, nous avons créé le tableau `instr_format` qui nous permet de savoir, selon le type d'instruction, les différents éléments qu'elle contient. Par conséquent, on connait le nombre de registre que l'on a ainsi que leur place et de même pour les valeurs immédiates avec le nombre de "séparation", leur taille... 
+
 
 * Avez-vous vu des motifs récurrents émerger ? Avez-vous "factorisé" ces motifs
 pour éviter de les répéter ? Si non, serait-ce difficile ?
 
-[COMPLÉTER ICI]
+  - Oui nous avons remarqué des motifs récurrents. Nous pouvons citer quelques exemples comme l'`opcode` ou le `funct3`  qui sont au même endroit pour 4 type d'instructions sur 5 (cf. [function.c - l.152](assembler/function.c#L152)). Cependant ce sont les seules instructions que nous avons géré de manière séparée.
+
+  - Cependant, le tableau mentionné précédemment (`instr_format`) contient un configuration complète des formats d'instructions. En parcourant ce tableau on positionne donc tous les éléments directement au bon endroit. Nous avons donc une factorisation du processus car la valeur hexa peut être trouvée en _quasiment_ une seule boucle `for`.
 
 * Comment avez-vous procédé pour écrire les tests ? Étes-vous confiant·e·s que
 toutes les instructions gérées et tous les types d'arguments sont couverts ?
 
-[COMPLÉTER ICI]
+  - Pour nos tests, nous avons créé deux fichiers tests : [full-test.s](assembler/full-test.s) et [.error_gestion.s](assembler/.error_gestion.s). Dans [full-test.s](assembler/full-test.s), nous avons tous les tests possibles et **compilables**. Cela, nous permet de voir si toutes les instructions fonctionnent. Nous avons aussi créé des instructions avec des valeurs immédiates négatives. Pour la gestion des erreurs comme : la mauvaise écriture des instructions, des noms de registres invalides ou à la mauvaise place; ces tests se trouvent dans le fichier [.error_gestion.s](assembler/.error_gestion.s) (qui commence par un `.` de manière à ne pas être pris en compte par le `make test`).
+  Pour savoir si nos tests fonctionnent, nous les avons entrée sur [ce site](https://luplab.gitlab.io/rvcodecjs/) qui permet de connaître les valeurs hexadécimales et binaires des instructions. Nous avons stockés les valeurs dans le fichier en question en tant que commentaire. Nous les comparont ensuite avec nos résultats.
 
 * Quelle a été votre expérience avec l'utilisation et la compréhension de la
 documentation fournie sur l'encodage des instructions RISC-V ?
 
-[COMPLÉTER ICI]
+  - Notre expérience avec la documentation fourni a été plutôt bonne. Comme toute documentation, il est nécessaire de prendre un temps pour comprendre comment elle fonctionne mais nous avons trouvé qu'elle était plutôt claire et bien expliqué
 
+  - 
+   
 * Cochez (en remplaçant `[ ]` par `[x]`) si vous avez :
   - [X] Implémenté la traduction pour toutes les instructions de la documentation
   - [X] Pris en compte les cas particuliers comme les valeurs immédiates négatives et le bit manquant dans l'encodage de `jal`

@@ -8,4 +8,5 @@ int find_registrer(char *str, char *registres[32]);
 char *to_bin(int n, int length);
 char *flip(char *str, int length);
 void pseudo_replace(char **tab, char **infos, char *types[13][5], int *nb_word);
+void error(char *str, int *output);
 void instr_parsing(char **tab, char **infos, uint32_t *output, char *registres[32], int instr_format[5][8][3]);
