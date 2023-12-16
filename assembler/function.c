@@ -3,29 +3,12 @@
 #include "function.h"
 
 char **parse_string(char *str, int *nb_word) {
-    // Comptage du nombre d'élements
-    // int nb_word = 0;
-    // for(int i = 0; *(str + i) != '\0'; i++) {
-    //     if(*(str + i) == ' ' || *(str + i) == ',' || *(str + i) == '(' || *(str + i) == ')') {
-    //         if(*(str + i + 1) != ' ') {
-    //             i++;
-    //         }
-    //         nb_word++;
-    //     }
-    // }
-
-    /*
-    Pour les pseudos instr si on garde le code d'au dessus ça bug => cst (temporairement)
-    -> tab pas assez grand 
-        -> realloc ??
-    + le comptage était bizarre (1 ou 2 en trop jsp)
-    */
     *nb_word = 5;
 
     // Allocation de la mémoire
     char **tab = malloc(*nb_word * sizeof(char *));
     for(int i = 0; i < *nb_word; i++) {
-        tab[i] = malloc(10 * sizeof(char)); // On suppose que 10 est suffisant (supposition max : 7 => imm value max 2^20 => 1048576) <- à vérif
+        tab[i] = malloc(10 * sizeof(char)); // On suppose que 10 est suffisant (supposition max : 7 => imm value max 2^20 => 1048576)
     }
 
     // Remplissage du tableau
@@ -107,8 +90,7 @@ char *to_bin(int n, int length) {
     if (n < 0){
         int tmp_n = 1;
         for (int i = 0; i < length; i++) tmp_n *= 2;
-        n = tmp_n - abs(n);
-        // complément a 2 => calcul de 2^(longueur) - |n| et on mets en binaire
+        n = tmp_n - abs(n); // Complément à 2 : 2^(longueur) - |n| puis on met en binaire
     }
     for (int i = length-1; i >= 0; --i, n >>= 1) str[i] = (n & 1) + '0';
     return str;
@@ -116,18 +98,12 @@ char *to_bin(int n, int length) {
 
 char *flip(char *str, int length) {
     char *new_str = malloc(length * sizeof(char));
-    if (length == 1) {
-        return str;
-
-    } 
+    if (length == 1) { return str; } 
     for (int i = 0; i < length; i++) new_str[i] = str[(length-1)-i];
     return new_str;
 }
 
-void pseudo_replace(char **tab, char **infos, char *types[13][5], int *nb_word) {
-    // (*nb_word)++;
-    // tab = realloc(tab, *nb_word * sizeof(char *));
-    
+void pseudo_replace(char **tab, char **infos, char *types[13][5], int *nb_word) {    
     if (strcmp(tab[0], "j") == 0) {
         strcpy(tab[2], tab[1]);
         strcpy(tab[1], "zero");

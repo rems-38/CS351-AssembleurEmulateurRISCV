@@ -5,11 +5,6 @@
 #include "function.h"
 #include "const.h"
 
-/* RISCV Instruction To Hex (and Bin) Converter :
-    - https://luplab.gitlab.io/rvcodecjs/ (<- meilleur)
-    - https://www.eg.bucknell.edu/~csci206/riscv-converter/index.html 
-*/
-
 int main(int argc, char **argv) {
     if(argc != 3) {
         printf("usage: ./riscv-assembler <ASSEMBLER INPUT> <HEX OUTPUT>\n");
@@ -50,7 +45,6 @@ int main(int argc, char **argv) {
                 for (int i = 0; i < nb_word; i++) free(tab[i]);
                 free(tab);
                 nb_word = 0;
-                // /!\ Il manque surement des free()
 
                 fprintf(foutput, "%08x\n", output);
             }

@@ -25,16 +25,16 @@ int instr_format[5][8][3] = {
 };
 
 /*
-Explication instr_format (R:0, I:1, S:2, B:3, J:4)
+Explication instr_format (0:R, 1:I, 2:S, 3:B, 4:J)
 {
     {si imm ou pas, nombre de "partitionnement", -1},
-    {start, length, -1}, 1er paramètre
-    {start, length, -1}, 2ème paramètre (sauf J où c'est settings im)
-    {start, length, -1}, 3ème paramètre ou settings imm (length tot) + start si en une partie
-    {start, length, offset}, partie 1 de imm
-    {start, length, offset}, partie 2 de imm
-    {start, length, offset}, partie 3 de imm
-    {start, length, offset} partie 4 de imm
+    {start, length, -1} => 1er paramètre (ex rd, rs1...)
+    {start, length, -1} => 2ème paramètre (sauf J où c'est settings im)
+    {start, length, -1} => 3ème paramètre ou settings imm (length tot) + start si en une partie
+    {start, length, offset} => partie 1 de imm
+    {start, length, offset} => partie 2 de imm
+    {start, length, offset} => partie 3 de imm
+    {start, length, offset} => partie 4 de imm
 
-    Si -1 => pas nécessaire pour ce bloc-ci
+    Si -1 => info pas nécessaire pour ce bloc-ci
 */
