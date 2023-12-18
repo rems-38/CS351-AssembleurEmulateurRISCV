@@ -58,15 +58,34 @@ Questions à remplir _avant_ de programmer l'émulateur (10 lignes sont conseill
 
 * Listez tous les éléments matériels auxquels vous pouvez penser dont l'émulateur doit reproduire le comportement, et déduisez-en une liste de toutes les tâches individuelles de l'émulateur.
 
-[COMPLÉTER ICI]
+  - Processeur (CPU) :
+    * Décodez et exécutez chaque instruction RISC-V.
+    * Mettez à jour les registres (x0 à x31) en fonction du résultat de l'instruction.
+    * Gérez le PC (Program Counter) pour passer à l'instruction suivante.
 
+  - Mémoire :
+    * Gérez l'espace d'adressage de la mémoire.
+    * Chargez le programme en mémoire à partir du fichier hexadécimal.
+    * Permettez la lecture et l'écriture dans la mémoire.
+
+  - Registres :
+    * Initialisez les registres avec des valeurs par défaut.
+    * Mettez à jour les registres en fonction des instructions exécutées.
+    
+  - Gestionnaire d'exceptions et de gestion des erreurs :
+    * Gérez les exceptions et les erreurs, par exemple les divisions par zéro, les dépassements de capacité, etc.
+    
 * Quelle fonction de la bibliothèque standard pouvez-vous utiliser pour lire les valeurs listées dans le fichier `.hex` sans vous casser la tête ? (Indice : ces valeurs ont été écrites avec `fprintf()`.)
 
-[COMPLÉTER ICI]
+  - Pour ne pas nous casser la tête, nous pouvons directement utiliser `fscanf()`, cela nous permet de récupérer directement les blocs de données qui nous intéresse en les séparant comme il faut. C'est ce qui nous semble le plus logique au vu du fait qu'on écrit avec un `fprintf()` avec un format spécifique, ici `%08x`.
 
 * Décrivez comment vous allez répartir les tâches de l'émulateur en différents fichiers, ou ne pas les répartir et tout faire dans le même fichier. Expliquez les avantages de votre choix.
 
-[COMPLÉTER ICI]
+  - Nous considérons 2 tâches principales pour l'émulateur :
+    * l'exécution globale du programme;
+    * l'exécution d'une instruction
+  
+    Dans notre fichier [function.c](emulator/function.c) nous allons donc coder ces deux fonctions `execute_instr` et `emulate_prog`. Nous séparons ceci du fichier [main.c](emulator/main.c) afin de ne pas le surcharger.
 <!-- 
 Questions à remplir _après_ avoir programmé l'émulateur :
 
