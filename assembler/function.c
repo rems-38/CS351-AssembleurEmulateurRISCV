@@ -121,7 +121,7 @@ void pseudo_replace(char **tab, char **infos, char *types[13][5], int *nb_word) 
     infos = get_infos(tab[0], types); // Udpate infos data
 }
 
-void error(char *str, int *output) {
+void error(char *str, uint32_t *output) {
     printf("Error: %s is not a number\n", str);
     *output = 0;
 }
