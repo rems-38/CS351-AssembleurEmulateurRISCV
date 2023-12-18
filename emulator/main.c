@@ -21,6 +21,8 @@ int main(int argc, char **argv) {
 
     uint32_t *instr = readFile(finput);
 
+    execute(instr, registres);
+
     write_state(foutput, registres);
     fclose(finput);
     fclose(foutput);

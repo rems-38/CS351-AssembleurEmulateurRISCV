@@ -8,15 +8,21 @@ uint32_t *readFile(FILE *finput) {
     }
 
     fseek(finput, 0, SEEK_SET);
-    uint32_t *instr = malloc(count * sizeof(uint32_t));
-    uint32_t line = 0;
-    count = 0;
-    while (fscanf(finput, "%08x", &line) != EOF) {
-        *(instr + count) = line;
-        count++;
+    uint32_t *instr = calloc(count + 1, sizeof(uint32_t)); // Calloc sets all values to 0
+    if (instr == NULL) {
+        printf("Error: could not allocate memory\n");
+        exit(1);
+    }
+
+    for (int i = 0; i < count; i++) {
+        if (fscanf(finput, "%08x", &instr[i]) == EOF) { break; }
     }
 
     return instr;
+}
+
+void execute(uint32_t *instr, uint32_t registres[33]) {
+    
 }
 
 
