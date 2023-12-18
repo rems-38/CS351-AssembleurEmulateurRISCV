@@ -9,7 +9,7 @@ SRC_EMU := $(wildcard emulator/*.c)
 
 TEST_DIR := tests/
 
-all: $(EXE_ASM) # $(EXE_EMU)
+all: $(EXE_ASM) $(EXE_EMU)
 
 $(EXE_ASM): $(SRC_ASM)
 	gcc $^ -o $@ -Wall -Wextra -O0 -g
