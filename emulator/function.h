@@ -3,5 +3,6 @@
 #include <stdint.h>
 
 uint32_t *readFile(FILE *finput);
-void execute(uint32_t *instr, uint32_t registres[33]);
-void write_state(FILE *foutput, uint32_t registres[33]);
+void execute_instr(Processor *cpu, uint32_t instr);
+void emulate_prog(Processor *cpu, uint32_t *instr);
+void write_state(FILE *foutput, Processor *cpu);

@@ -52,7 +52,6 @@ documentation fournie sur l'encodage des instructions RISC-V ?
   - [X] Pris en compte les cas particuliers comme les valeurs immédiates négatives et le bit manquant dans l'encodage de `jal`
   - [X] Écrit du code de gestion d'erreur pour que le programme ait une réaction propre si le code assembleur est invalide _(pas demandé par le sujet)_
 
-<!-- 
 ## Rendu 3
 
 Questions à remplir _avant_ de programmer l'émulateur (10 lignes sont conseillées à chaque fois pour bien y réfléchir) :
@@ -68,7 +67,7 @@ Questions à remplir _avant_ de programmer l'émulateur (10 lignes sont conseill
 * Décrivez comment vous allez répartir les tâches de l'émulateur en différents fichiers, ou ne pas les répartir et tout faire dans le même fichier. Expliquez les avantages de votre choix.
 
 [COMPLÉTER ICI]
-
+<!-- 
 Questions à remplir _après_ avoir programmé l'émulateur :
 
 * Aviez-vous réussi à listé toutes les tâches dans la première question ? Rétrospectivement, y a-t-il des tâches dont vous aviez sous-estimé ou sur-estimé la complexité ?

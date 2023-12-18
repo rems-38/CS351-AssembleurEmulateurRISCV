@@ -19,11 +19,14 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    Processor cpu;
+    
     uint32_t *instr = readFile(finput);
+    emulate_prog(&cpu, instr);
 
-    execute(instr, registres);
+    free(instr);
 
-    write_state(foutput, registres);
+    write_state(foutput, &cpu);
     fclose(finput);
     fclose(foutput);
 

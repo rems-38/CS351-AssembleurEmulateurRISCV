@@ -1,3 +1,4 @@
+#include "const.h"
 #include "function.h"
 
 uint32_t *readFile(FILE *finput) {
@@ -21,14 +22,20 @@ uint32_t *readFile(FILE *finput) {
     return instr;
 }
 
-void execute(uint32_t *instr, uint32_t registres[33]) {
-    
+void execute_instr(Processor *cpu, uint32_t instr) {
+    return;
 }
 
-
-void write_state(FILE *foutput, uint32_t registres[33]) {
-    for (int i = 0; i < 32; i++) {
-        fprintf(foutput, "x%.2d: %d\n", i, registres[i]);
+void emulate_prog(Processor *cpu, uint32_t *instr) {
+    while (instr[cpu->pc / 4] != 0) {
+        execute_instr(cpu, instr[cpu->pc / 4]);
+        cpu->pc += 4;
     }
-    fprintf(foutput, "pc: %d\n", registres[32]);
+}
+
+void write_state(FILE *foutput, Processor *cpu) {
+    for (int i = 0; i < 32; i++) {
+        fprintf(foutput, "x%.2d: %d\n", i, cpu->reg[i]);
+    }
+    fprintf(foutput, "pc: %d\n", cpu->pc);
 }

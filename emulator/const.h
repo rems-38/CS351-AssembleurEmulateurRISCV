@@ -1,4 +1,6 @@
 #include <stdint.h>
 
-uint32_t registres[33] = {0, 0, 16384, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
+typedef struct {
+    uint32_t reg[32];
+    uint32_t pc;
+} Processor;
