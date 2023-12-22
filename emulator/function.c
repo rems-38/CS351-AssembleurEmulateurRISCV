@@ -27,11 +27,15 @@ void readFile(FILE *finput, Processor *cpu) {
     }
 }
 
-char *decode_instr(uint32_t instr) {
-    return "decode";
+Instruction decode_instr(uint32_t instr) {
+    Instruction ret = {0, 0, 0, 0, 0};
+
+
+
+    return ret;
 }
 
-void execute_instr(Processor *cpu, char *instr) {
+void execute_instr(Processor *cpu, Instruction instr) {
     return;
 }
 
