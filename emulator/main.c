@@ -20,11 +20,11 @@ int main(int argc, char **argv) {
     }
 
     Processor cpu;
+    init(&cpu);
     
-    uint32_t *instr = readFile(finput);
-    emulate_prog(&cpu, instr);
+    readFile(finput, &cpu);
 
-    free(instr);
+    emulate_prog(&cpu);
 
     write_state(foutput, &cpu);
     fclose(finput);

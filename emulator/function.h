@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-uint32_t *readFile(FILE *finput);
-void execute_instr(Processor *cpu, uint32_t instr);
-void emulate_prog(Processor *cpu, uint32_t *instr);
+void init(Processor *cpu);
+void readFile(FILE *finput, Processor *cpu);
+char *decode_instr(uint32_t instr);
+void execute_instr(Processor *cpu, char *instr);
+void emulate_prog(Processor *cpu);
 void write_state(FILE *foutput, Processor *cpu);

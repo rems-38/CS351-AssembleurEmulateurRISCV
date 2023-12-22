@@ -1,7 +1,20 @@
 #include "const.h"
 #include "function.h"
 
-uint32_t *readFile(FILE *finput) {
+void init(Processor *cpu) {
+    for (int i = 0; i < 32; i++) {
+        cpu->reg[i] = 0;
+    }
+    cpu->reg[2] = 16384/4;
+    cpu->pc = 0;
+
+    cpu->size = 16384;
+    for (int i = 0; i < cpu->size/4; i++) {
+        cpu->mem[i] = 0;
+    }
+}
+
+void readFile(FILE *finput, Processor *cpu) {
     int count = 0;
     unsigned int buf = 0;
     while (fscanf(finput, "%08x", &buf) != EOF) {
@@ -9,27 +22,23 @@ uint32_t *readFile(FILE *finput) {
     }
 
     fseek(finput, 0, SEEK_SET);
-    uint32_t *instr = calloc(count + 1, sizeof(uint32_t)); // Calloc sets all values to 0
-    if (instr == NULL) {
-        printf("Error: could not allocate memory\n");
-        exit(1);
-    }
-
     for (int i = 0; i < count; i++) {
-        if (fscanf(finput, "%08x", &instr[i]) == EOF) { break; }
+        if (fscanf(finput, "%08x", &(cpu->mem[i])) == EOF) { break; }
     }
-
-    return instr;
 }
 
-void execute_instr(Processor *cpu, uint32_t instr) {
+char *decode_instr(uint32_t instr) {
+    return "decode";
+}
+
+void execute_instr(Processor *cpu, char *instr) {
     return;
 }
 
-void emulate_prog(Processor *cpu, uint32_t *instr) {
-    while (instr[cpu->pc / 4] != 0) {
-        execute_instr(cpu, instr[cpu->pc / 4]);
-        cpu->pc += 4;
+void emulate_prog(Processor *cpu) {
+    while(cpu->mem[cpu->pc] != 0) {
+        execute_instr(cpu, decode_instr(cpu->mem[cpu->pc]));
+        cpu->pc++;
     }
 }
 
