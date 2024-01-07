@@ -12,14 +12,14 @@ typedef struct {
     int result;
     int ope1;
     int ope2;
-    int test;
+    int settings;
 } Instruction;
 
 /*
 Explication Instruction (en gros) :
-    Pattern : 0, 1 ou 2 (une addition, avec pile, test/PC)
+    Pattern : 0, 1, 2 ou 3 (une addition, avec pile, test/PC, jump)
     Result : rd en général
     Ope1 : rs1 en général
     Ope2 : rs2 ou imm
-    Test : 0, 1, 2 ou 3 (==, !=, <, >=)
+    Settings : 1 ou -1 pour add, sub OU 0, 1, 2 ou 3 (==, !=, <, >=) OU 0 ou 1 pour ordre sd, ld
 */
