@@ -37,6 +37,7 @@ Instruction decode_instr(uint32_t word) {
         instr.ope2 = (word >> 20) & 0x1f;
         instr.settings = 1;
         if (opcode == 0x33 && ((word >> 25) & 0x7f) == 0x20) instr.settings = -1; // for sub
+        else if (opcode == 0x13) instr.settings = 2; // for addi
     }
     else if (opcode == 0x03 || opcode == 0x23 ) { // ld, sd
         instr.pattern = 1;
@@ -69,16 +70,19 @@ Instruction decode_instr(uint32_t word) {
 }
 
 void execute_instr(Processor *cpu, Instruction instr) {
-    if (instr.pattern == 0) cpu->reg[instr.result] = cpu->reg[instr.ope1] + instr.settings * cpu->reg[instr.ope2];
+    if (instr.pattern == 0) {
+        if (instr.settings == 2) cpu->reg[instr.result] = cpu->reg[instr.ope1] + instr.ope2;
+        else cpu->reg[instr.result] = cpu->reg[instr.ope1] + instr.settings * cpu->reg[instr.ope2];
+    }
     else if (instr.pattern == 1) {
         if (instr.settings == 0) cpu->reg[instr.result] = cpu->mem[cpu->reg[instr.ope1] + cpu->reg[instr.ope2]];
         else if (instr.settings == 1) cpu->mem[cpu->reg[instr.ope1] + cpu->reg[instr.ope2]] = cpu->reg[instr.result];
     }
     else if (instr.pattern == 2) {
-        if (instr.settings == 0) if (cpu->reg[instr.ope1] == cpu->reg[instr.ope2]) cpu->pc += instr.result;
-        else if (instr.settings == 1) if (cpu->reg[instr.ope1] != cpu->reg[instr.ope2]) cpu->pc += instr.result;
-        else if (instr.settings == 2) if (cpu->reg[instr.ope1] < cpu->reg[instr.ope2]) cpu->pc += instr.result;
-        else if (instr.settings == 3) if (cpu->reg[instr.ope1] >= cpu->reg[instr.ope2]) cpu->pc += instr.result;
+        if (instr.settings == 0) { if (cpu->reg[instr.ope1] == cpu->reg[instr.ope2]) cpu->pc += instr.result; }
+        else if (instr.settings == 1) { if (cpu->reg[instr.ope1] != cpu->reg[instr.ope2]) cpu->pc += instr.result; }
+        else if (instr.settings == 2) { if (cpu->reg[instr.ope1] < cpu->reg[instr.ope2]) cpu->pc += instr.result; }
+        else if (instr.settings == 3) { if (cpu->reg[instr.ope1] >= cpu->reg[instr.ope2]) cpu->pc += instr.result; }
     }
     else if (instr.pattern == 3) {
         cpu->reg[instr.result] = cpu->pc + 1;
