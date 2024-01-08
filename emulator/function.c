@@ -69,7 +69,21 @@ Instruction decode_instr(uint32_t word) {
 }
 
 void execute_instr(Processor *cpu, Instruction instr) {
-    return;    
+    if (instr.pattern == 0) cpu->reg[instr.result] = cpu->reg[instr.ope1] + instr.settings * cpu->reg[instr.ope2];
+    else if (instr.pattern == 1) {
+        if (instr.settings == 0) cpu->reg[instr.result] = cpu->mem[cpu->reg[instr.ope1] + cpu->reg[instr.ope2]];
+        else if (instr.settings == 1) cpu->mem[cpu->reg[instr.ope1] + cpu->reg[instr.ope2]] = cpu->reg[instr.result];
+    }
+    else if (instr.pattern == 2) {
+        if (instr.settings == 0) if (cpu->reg[instr.ope1] == cpu->reg[instr.ope2]) cpu->pc += instr.result;
+        else if (instr.settings == 1) if (cpu->reg[instr.ope1] != cpu->reg[instr.ope2]) cpu->pc += instr.result;
+        else if (instr.settings == 2) if (cpu->reg[instr.ope1] < cpu->reg[instr.ope2]) cpu->pc += instr.result;
+        else if (instr.settings == 3) if (cpu->reg[instr.ope1] >= cpu->reg[instr.ope2]) cpu->pc += instr.result;
+    }
+    else if (instr.pattern == 3) {
+        cpu->reg[instr.result] = cpu->pc + 1;
+        cpu->pc += cpu->reg[instr.ope2]; // peut etre à diviser par 4 (à voir)
+    }
 }
 
 void emulate_prog(Processor *cpu) {
