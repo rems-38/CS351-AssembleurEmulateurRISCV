@@ -29,42 +29,55 @@ void readFile(FILE *finput, Processor *cpu) {
 
 Instruction decode_instr(uint32_t word) {
     Instruction instr = {0, 0, 0, 0, 0};
-    int opcode = word & 0x7f;
+    int opcode = word & 0x7f; // 0x7f -> 0111 1111 donc 7 bits
     if (opcode == 0x33 || opcode == 0x13) { // add, sub, addi
         instr.pattern = 0;
-        instr.result = (word >> 7) & 0x1f;
+        instr.result = (word >> 7) & 0x1f; // 0x1f -> 0001 1111 donc 5 bits
         instr.ope1 = (word >> 15) & 0x1f;
         instr.ope2 = (word >> 20) & 0x1f;
         instr.settings = 1;
         if (opcode == 0x33 && ((word >> 25) & 0x7f) == 0x20) instr.settings = -1; // for sub
-        else if (opcode == 0x13) instr.settings = 2; // for addi
+        else if (opcode == 0x13) { // pour addi
+            instr.ope2 = (word >> 20) & 0xfff;
+            instr.settings = 2;
+        }
     }
     else if (opcode == 0x03 || opcode == 0x23 ) { // ld, sd
         instr.pattern = 1;
-        instr.result = (word >> 7) & 0x1f;
         instr.ope1 = (word >> 15) & 0x1f;
-        instr.ope2;
-        if (opcode == 0x03) instr.settings = 0;
-        else instr.settings = 1;
+        if (opcode == 0x03) {
+            instr.result = (word >> 7) & 0x1f;
+            instr.ope2 = (word >> 20) & 0xfff;
+            instr.settings = 0;
+        }
+        else {
+            instr.result = (word >> 20) & 0x1f;
+            instr.ope2 = ((word >> 7) & 0x1f) + 32 * ((word >> 25) & 0x7f);
+            instr.settings = 1;
+        } 
     }
     else if (opcode == 0x63) { // beq, bne, blt, bge
         instr.pattern = 2;
-        if (((word >> 25) & 0x7f) == 0x00) instr.settings = 0;
-        else if (((word >> 25) & 0x7f) == 0x01) instr.settings = 1;
-        else if (((word >> 25) & 0x7f) == 0x04) instr.settings = 2;
-        else if (((word >> 25) & 0x7f) == 0x05) instr.settings = 3;
-        instr.ope2;
+        instr.ope1 = (word >> 15) & 0x1f;
+        instr.ope2 = (word >> 20) & 0x1f;
+        if (((word >> 25) & 0x7f) == 0x00) instr.settings = 0; // beq
+        else if (((word >> 25) & 0x7f) == 0x01) instr.settings = 1; // bne
+        else if (((word >> 25) & 0x7f) == 0x04) instr.settings = 2; // blt
+        else if (((word >> 25) & 0x7f) == 0x05) instr.settings = 3; // bge
+        instr.result = 2*((word >> 8) & 0xf) + 32* ((word >> 25) & 0x1f) +  2048 * ((word >> 7) & 0x1)  + 4096 *(word >> 31); // imm
+        //  b d 1 1
+        //9a758be3
     } else if (opcode == 0x6f) { // jal
         instr.pattern = 3;
         instr.result = (word >> 7) & 0x1f;
         instr.ope2;
     }
 
-    // printf("pattern: %d\n", instr.pattern);
-    // printf("result: %d\n", instr.result);
-    // printf("ope1: %d\n", instr.ope1);
-    // printf("ope2: %d\n", instr.ope2);
-    // printf("settings: %d\n\n", instr.settings);
+    printf("pattern: %d\n", instr.pattern);
+    printf("result: %d\n", instr.result);
+    printf("ope1: %d\n", instr.ope1);
+    printf("ope2: %d\n", instr.ope2);
+    printf("settings: %d\n\n", instr.settings);
 
     return instr;
 }
