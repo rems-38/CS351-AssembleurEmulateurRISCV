@@ -94,6 +94,20 @@ def assert_equal_regs(ref, out):
     if failed:
         pytest.fail(msg)
 
+def convert_gcc_syntax(input, output):
+    with open(input, "r") as fp:
+        asm = fp.read()
+
+    RE_JUMP = re.compile(r'\b(j|jal|beq|bne|blt|bge)\b\s*([^\n]+)', re.I)
+    def rep(m):
+        args = m[2].split(",")
+        args = args[:-1] + ["(.+ " + args[-1] + ")"]
+        return m[1] + " " + ", ".join(args)
+
+    asm = RE_JUMP.sub(rep, asm)
+    with open(output, "w") as fp:
+        fp.write(asm)
+
 class TestRISCVAssembler:
     def get_reference(self, file):
         prog = os.path.splitext(file)[0]
@@ -101,8 +115,11 @@ class TestRISCVAssembler:
         prog_bin = prog + ".bin"
 
         if RV64_GCC is not None:
+            file_gcc = file[:-2] + ".s.gnu"
+            convert_gcc_syntax(file, file_gcc)
             subprocess.run(
-                [RV64_GCC, "-c", file, "-o", prog_obj],
+                [RV64_GCC, "-march=rv64i", "-mabi=lp64", "-x", "assembler",
+                 "-c", file_gcc, "-o", prog_obj],
                 check=True)
         else:
             subprocess.run(

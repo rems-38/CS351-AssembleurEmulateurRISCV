@@ -112,7 +112,7 @@ void emulate_prog(Processor *cpu) {
 
 void write_state(FILE *foutput, Processor *cpu) {
     for (int i = 0; i < 32; i++) {
-        fprintf(foutput, "x%.2d: %d\n", i, cpu->reg[i]);
+        fprintf(foutput, "x%d: %ld\n", i, cpu->reg[i]);
     }
-    fprintf(foutput, "pc: %d\n", cpu->pc);
+    fprintf(foutput, "pc: %ld\n", cpu->pc);
 }
