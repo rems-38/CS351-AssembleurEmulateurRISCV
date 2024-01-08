@@ -1,1 +1,7 @@
 __pycache__/*
+**/*.hex
+**/*.bin
+**/*.o
+**/*.state
+riscv-assembler
+riscv-emulator
