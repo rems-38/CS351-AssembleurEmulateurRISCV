@@ -82,12 +82,14 @@ Instruction decode_instr(uint32_t word) {
 
 void execute_instr(Processor *cpu, Instruction instr) {
     if (instr.pattern == 0) {
-        if (instr.settings == 2) cpu->reg[instr.result] = cpu->reg[instr.ope1] + instr.ope2;
-        else cpu->reg[instr.result] = cpu->reg[instr.ope1] + instr.settings * cpu->reg[instr.ope2];
+        if (instr.settings == 2) {
+            if (instr.result != 2) cpu->reg[instr.result] = cpu->reg[instr.ope1] + instr.ope2;
+            else cpu->reg[instr.result] = cpu->reg[instr.ope1] + (instr.ope2 / 4); // si sp, on divise par 4 (car notre mémoire est faite comme ça)
+        } else cpu->reg[instr.result] = cpu->reg[instr.ope1] + instr.settings * cpu->reg[instr.ope2];
     }
     else if (instr.pattern == 1) {
-        if (instr.settings == 0) cpu->reg[instr.result] = cpu->mem[cpu->reg[instr.ope1] + cpu->reg[instr.ope2]];
-        else if (instr.settings == 1) cpu->mem[cpu->reg[instr.ope1] + cpu->reg[instr.ope2]] = cpu->reg[instr.result];
+        if (instr.settings == 0) cpu->reg[instr.result] = cpu->mem[cpu->reg[instr.ope1] + (instr.ope2 / 4)];
+        else if (instr.settings == 1) cpu->mem[cpu->reg[instr.ope1] + (instr.ope2 / 4)] = cpu->reg[instr.result];
     }
     else if (instr.pattern == 2) {
         if (instr.settings == 0) { if (cpu->reg[instr.ope1] == cpu->reg[instr.ope2]) cpu->pc += instr.result / 4; }
@@ -103,14 +105,23 @@ void execute_instr(Processor *cpu, Instruction instr) {
 
 void emulate_prog(Processor *cpu) {
     while(cpu->mem[cpu->pc] != 0) {
+        printf("pc: %d\n", cpu->pc);
+        for(int i = 0; cpu->mem[i] != 0; i++) {
+            printf("(%d)    %08x\n", i, cpu->mem[i]);
+        }
+        printf("(....)\n");
+        for(int i = (cpu->size/4)-5; i < cpu->size/4; i++) {
+            printf("(%d) %08x\n", i, cpu->mem[i]);
+        }
+        printf("\n");
+
         execute_instr(cpu, decode_instr(cpu->mem[cpu->pc]));
         cpu->pc++;
     }
 }
 
 void write_state(FILE *foutput, Processor *cpu) {
-    for (int i = 0; i < 32; i++) {
+    for (int i = 0; i < 32; i++) { 
         fprintf(foutput, "x%d: %ld\n", i, (i != 2) ? cpu->reg[i] : cpu->reg[i]*4);
     }
-    // fprintf(foutput, "pc: %ld\n", cpu->pc);
 }
