@@ -34,8 +34,7 @@ Instruction decode_instr(uint32_t word) {
         instr.pattern = 0;
         instr.result = (word >> 7) & 0x1f; // 0x1f -> 0001 1111 donc 5 bits
         instr.ope1 = (word >> 15) & 0x1f;
-        instr.ope2 = (word >> 20) & 0xfff; // imm
-        if (word >> 31) instr.ope2 -= 4096; // imm (negative value)
+        instr.ope2 = (word >> 20) & 0x1f;
         instr.settings = 1;
         if (opcode == 0x33 && ((word >> 25) & 0x7f) == 0x20) instr.settings = -1; // for sub
         else if (opcode == 0x13) { // pour addi

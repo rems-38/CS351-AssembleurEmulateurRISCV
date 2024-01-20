@@ -6,7 +6,7 @@ beq a7, s1, 4
 add a7, s1, zero
 
 # jump du beq
-addi s1, zero
+addi s1, zero, 0
 
 # EXPECTED
 # sp : 16384
