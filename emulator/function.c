@@ -64,9 +64,8 @@ Instruction decode_instr(uint32_t word) {
         else if (((word >> 25) & 0x7f) == 0x01) instr.settings = 1; // bne
         else if (((word >> 25) & 0x7f) == 0x04) instr.settings = 2; // blt
         else if (((word >> 25) & 0x7f) == 0x05) instr.settings = 3; // bge
-        instr.result = 2*((word >> 8) & 0xf) + 32* ((word >> 25) & 0x1f) +  2048 * ((word >> 7) & 0x1)  + 4096 *(word >> 31); // imm
-        //  b d 1 1
-        //9a758be3
+        if (word >> 31) instr.result = 2*((word >> 8) & 0xf) + 32*((word >> 25) & 0x3f) +  2048*((word >> 7) & 0x1) + 4096*(word >> 31) - 8192; // imm (negative value)
+        else instr.result = 2*((word >> 8) & 0xf) + 32*((word >> 25) & 0x3f) +  2048*((word >> 7) & 0x1) + 4096*(word >> 31); // imm
     } else if (opcode == 0x6f) { // jal
         instr.pattern = 3;
         instr.result = (word >> 7) & 0x1f;
