@@ -21,5 +21,13 @@ Explication Instruction (en gros) :
     Result : rd en général
     Ope1 : rs1 en général
     Ope2 : rs2 ou imm
-    Settings : 1 ou -1 pour add, sub OU 0, 1, 2 ou 3 (==, !=, <, >=) OU 0 ou 1 pour ordre sd, ld
+    Settings :
+        - add: 1
+        - sub: -1
+        - addi: 2
+     
+        - (==, !=, <, >=): 0, 1, 2, 3
+     
+        - ld: 0
+        - sd: 1
 */

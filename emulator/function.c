@@ -51,13 +51,13 @@ Instruction decode_instr(uint32_t word) {
             instr.result = (word >> 7) & 0x1f;
             instr.ope2 = (word >> 20) & 0xfff;
             if (word >> 31) instr.ope2 -= 4096;
-            instr.settings = 0;
+            instr.settings = 0; // ld
         }
         else {
             instr.result = (word >> 20) & 0x1f;
             instr.ope2 = ((word >> 7) & 0x1f) + 32*((word >> 25) & 0x7f);
             if (word >> 31) instr.ope2 -= 4096;
-            instr.settings = 1;
+            instr.settings = 1; // sd
         } 
     }
     else if (opcode == 0x63) { // beq, bne, blt, bge
@@ -88,7 +88,7 @@ void execute_instr(Processor *cpu, Instruction instr) {
         } else cpu->reg[instr.result] = cpu->reg[instr.ope1] + instr.settings * cpu->reg[instr.ope2];
     }
     else if (instr.pattern == 1) {
-        if (instr.settings == 0) cpu->reg[instr.result] = cpu->mem[cpu->reg[instr.ope1] + (instr.ope2 / 4)];
+        if (instr.settings == 0) cpu->reg[instr.result] = cpu->mem[cpu->reg[instr.ope1] + (instr.ope2 / 4)]; 
         else if (instr.settings == 1) cpu->mem[cpu->reg[instr.ope1] + (instr.ope2 / 4)] = cpu->reg[instr.result];
     }
     else if (instr.pattern == 2) {
@@ -105,16 +105,6 @@ void execute_instr(Processor *cpu, Instruction instr) {
 
 void emulate_prog(Processor *cpu) {
     while(cpu->mem[cpu->pc] != 0) {
-        printf("pc: %d\n", cpu->pc);
-        for(int i = 0; cpu->mem[i] != 0; i++) {
-            printf("(%d)    %08x\n", i, cpu->mem[i]);
-        }
-        printf("(....)\n");
-        for(int i = (cpu->size/4)-5; i < cpu->size/4; i++) {
-            printf("(%d) %08x\n", i, cpu->mem[i]);
-        }
-        printf("\n");
-
         execute_instr(cpu, decode_instr(cpu->mem[cpu->pc]));
         cpu->pc++;
     }
