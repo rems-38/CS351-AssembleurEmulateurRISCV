@@ -34,11 +34,13 @@ Instruction decode_instr(uint32_t word) {
         instr.pattern = 0;
         instr.result = (word >> 7) & 0x1f; // 0x1f -> 0001 1111 donc 5 bits
         instr.ope1 = (word >> 15) & 0x1f;
-        instr.ope2 = (word >> 20) & 0x1f;
+        instr.ope2 = (word >> 20) & 0xfff; // imm
+        if (word >> 31) instr.ope2 -= 4096; // imm (negative value)
         instr.settings = 1;
         if (opcode == 0x33 && ((word >> 25) & 0x7f) == 0x20) instr.settings = -1; // for sub
         else if (opcode == 0x13) { // pour addi
             instr.ope2 = (word >> 20) & 0xfff;
+            if (word >> 31) instr.ope2 -= 4096; // imm (negative value)
             instr.settings = 2;
         }
     }
@@ -48,11 +50,13 @@ Instruction decode_instr(uint32_t word) {
         if (opcode == 0x03) {
             instr.result = (word >> 7) & 0x1f;
             instr.ope2 = (word >> 20) & 0xfff;
+            if (word >> 31) instr.ope2 -= 4096;
             instr.settings = 0;
         }
         else {
             instr.result = (word >> 20) & 0x1f;
-            instr.ope2 = ((word >> 7) & 0x1f) + 32 * ((word >> 25) & 0x7f);
+            instr.ope2 = ((word >> 7) & 0x1f) + 32*((word >> 25) & 0x7f);
+            if (word >> 31) instr.ope2 -= 4096;
             instr.settings = 1;
         } 
     }
@@ -64,19 +68,14 @@ Instruction decode_instr(uint32_t word) {
         else if (((word >> 25) & 0x7f) == 0x01) instr.settings = 1; // bne
         else if (((word >> 25) & 0x7f) == 0x04) instr.settings = 2; // blt
         else if (((word >> 25) & 0x7f) == 0x05) instr.settings = 3; // bge
-        if (word >> 31) instr.result = 2*((word >> 8) & 0xf) + 32*((word >> 25) & 0x3f) +  2048*((word >> 7) & 0x1) + 4096*(word >> 31) - 8192; // imm (negative value)
-        else instr.result = 2*((word >> 8) & 0xf) + 32*((word >> 25) & 0x3f) +  2048*((word >> 7) & 0x1) + 4096*(word >> 31); // imm
+        instr.result = 2*((word >> 8) & 0xf) + 32*((word >> 25) & 0x3f) + 2048*((word >> 7) & 0x1) + 4096*(word >> 31); // imm
+        if (word >> 31) instr.result -= 8192; // imm (negative value)
     } else if (opcode == 0x6f) { // jal
         instr.pattern = 3;
         instr.result = (word >> 7) & 0x1f;
-        instr.ope2;
+        instr.ope2 = 2*((word >> 21) & 0x3ff) + 2048*((word >> 20) & 0x1) + 4096*((word >> 12) & 0xff) + 1048576*(word >> 31); // imm
+        if (word >> 31) instr.ope2 -= 2097152; // imm (negative value)
     }
-
-    printf("pattern: %d\n", instr.pattern);
-    printf("result: %d\n", instr.result);
-    printf("ope1: %d\n", instr.ope1);
-    printf("ope2: %d\n", instr.ope2);
-    printf("settings: %d\n\n", instr.settings);
 
     return instr;
 }
