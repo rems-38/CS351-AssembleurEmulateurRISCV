@@ -1,16 +1,9 @@
-addi a1, zero, -1628
-addi t2, a1, 72
-beq a1, t2, -2048
-sub s3, t2, a1
-add s3, t2, s3
-ld t0, 16(t6)
-sd a5, 1244(s10)
-jal zero, -524288
+addi a1, zero, 20
+jal zero, 8
+add a1, a1, a1
+addi a1, a1, 2
 
 # EXPECTED
 # sp: 16384
-# a1: 20
-# t2: 92
-# s3: 164
-
+# a1: 22
 
