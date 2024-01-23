@@ -5,7 +5,7 @@ void init(Processor *cpu) {
     for (int i = 0; i < 32; i++) {
         cpu->reg[i] = 0;
     }
-    cpu->reg[2] = 16384/4;
+    cpu->reg[2] = 16384;
     cpu->pc = 0;
 
     cpu->size = 16384;
@@ -81,14 +81,12 @@ Instruction decode_instr(uint32_t word) {
 
 void execute_instr(Processor *cpu, Instruction instr) {
     if (instr.pattern == 0) {
-        if (instr.settings == 2) {
-            if (instr.result != 2) cpu->reg[instr.result] = cpu->reg[instr.ope1] + instr.ope2;
-            else cpu->reg[instr.result] = cpu->reg[instr.ope1] + (instr.ope2 / 4); // si sp, on divise par 4 (car notre mémoire est faite comme ça)
-        } else cpu->reg[instr.result] = cpu->reg[instr.ope1] + instr.settings * cpu->reg[instr.ope2];
+        if (instr.settings == 2) cpu->reg[instr.result] = cpu->reg[instr.ope1] + instr.ope2;
+        else cpu->reg[instr.result] = cpu->reg[instr.ope1] + instr.settings * cpu->reg[instr.ope2];
     }
     else if (instr.pattern == 1) {
-        if (instr.settings == 0) cpu->reg[instr.result] = cpu->mem[cpu->reg[instr.ope1] + (instr.ope2 / 4)]; 
-        else if (instr.settings == 1) cpu->mem[cpu->reg[instr.ope1] + (instr.ope2 / 4)] = cpu->reg[instr.result];
+        if (instr.settings == 0) cpu->reg[instr.result] = cpu->mem[(cpu->reg[instr.ope1] + instr.ope2) / 4]; 
+        else if (instr.settings == 1) cpu->mem[(cpu->reg[instr.ope1] + instr.ope2) / 4] = cpu->reg[instr.result];
     }
     else if (instr.pattern == 2) {
         if (instr.settings == 0) { if (cpu->reg[instr.ope1] == cpu->reg[instr.ope2]) cpu->pc += instr.result / 4; }
@@ -97,7 +95,7 @@ void execute_instr(Processor *cpu, Instruction instr) {
         else if (instr.settings == 3) { if (cpu->reg[instr.ope1] >= cpu->reg[instr.ope2]) cpu->pc += instr.result / 4; }
     }
     else if (instr.pattern == 3) {
-        if (instr.result != 0) cpu->reg[instr.result] = cpu->pc + 1; // jal x0, imm (on ne save rien dans x0)
+        if (instr.result != 0) cpu->reg[instr.result] = (cpu->pc + 1) * 4; // jal x0, imm (on ne save rien dans x0)
         cpu->pc += (instr.ope2 / 4) - 1; // on soustrait 1 car on incrémente pc à la fin de emulate_prog
     }
 }
@@ -111,6 +109,7 @@ void emulate_prog(Processor *cpu) {
 
 void write_state(FILE *foutput, Processor *cpu) {
     for (int i = 0; i < 32; i++) { 
-        fprintf(foutput, "x%d: %ld\n", i, (i != 2) ? cpu->reg[i] : cpu->reg[i]*4);
+        fprintf(foutput, "x%d: %ld\n", i, cpu->reg[i]);
     }
 }
+

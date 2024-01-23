@@ -54,8 +54,6 @@ documentation fournie sur l'encodage des instructions RISC-V ?
 
 ## Rendu 3
 
-Questions à remplir _avant_ de programmer l'émulateur (10 lignes sont conseillées à chaque fois pour bien y réfléchir) :
-
 * Listez tous les éléments matériels auxquels vous pouvez penser dont l'émulateur doit reproduire le comportement, et déduisez-en une liste de toutes les tâches individuelles de l'émulateur.
 
   - Processeur (CPU) :
@@ -86,41 +84,51 @@ Questions à remplir _avant_ de programmer l'émulateur (10 lignes sont conseill
     * l'exécution d'une instruction
   
     Dans notre fichier [function.c](emulator/function.c) nous allons donc coder ces deux fonctions `execute_instr` et `emulate_prog`. Nous séparons ceci du fichier [main.c](emulator/main.c) afin de ne pas le surcharger.
-<!-- 
-Questions à remplir _après_ avoir programmé l'émulateur :
 
 * Aviez-vous réussi à listé toutes les tâches dans la première question ? Rétrospectivement, y a-t-il des tâches dont vous aviez sous-estimé ou sur-estimé la complexité ?
 
-[COMPLÉTER ICI]
+  - Pour les tâches listées lors de la première question, nous trouvons que nous les avons à peu près toutes écrites. Il y a seulement le gestionnaire d'erreur que nous n'avons pas fait.
+  
+  - Pour ce qui concerne la complexité de celles-ci, nous savions que certaines tâches seraient plus simples que d'autre mais en globalité, nous avons fait le boulot assez facilité.
+
 
 * Avez-vous compris le fonctionnement de chaque instruction à partir de la
 documentation fournie ? Si non, quels sont les points obscurs ?
 
-[COMPLÉTER ICI]
+  - Oui, toutes les instructions avaient déjà bien été comprise lors de la partie assembleur mais nous en avons eu ici un regard différent car avant, nous ne nous étions pas concentré sur ce qu'elle faisait vraiment.
+  
+  - Les instructions dont nous avons eu le plus de mal à comprendre (même si ça ne nous a pas été trop compliqué non plus), ce sont les instructions `ld`/`sd`. Nous avons eu des doutes sur comment réaliser les accès en mémoire car nous avions peur d'avoir des conflits avec notre programme en lui-même, qui se trouve également dans la mémoire. Finalement, nous avons décidé que ça relevait de la responsabilité de l'utilisateur quand il écrirait son programme.
 
 * Quels exemples de programmes avez-vous choisi pour tester le calcul ? Les
 comparaisons et sauts ? La mémoire ?
 
-[COMPLÉTER ICI]
+  - Pour le calcul, nous avons fait des programmes simples d'addition, soustractions etc...
+
+  - Pour tester les comparaisons et les sauts, nous avons fait des petites boucles, des programmes basique qui répètent une même opération en décrémentant une valeur, tant que cette valeuur ne vérifie pas une condition on continue.
+
+  - Et enfin, pour la mémoire, nous avons simplement fait du stockage de registres dans la pile, en modifiant pour la suite le registre sauvegardé et en récupérant sa valeur initiale, pour montrer que la sauvegarde en mémoire fonctionne correctement.
 
 * Reste-t-il des bugs que vous avez découverts et pas corrigés ?
 
-[COMPLÉTER ICI]
+  - A priori, nous n'avons pas trouvé de problème apparent. Nous avons réaliser différents tests qui nous permettent de tester toutes les instructions demandées. Nos tests reviennent tous justes.
 
 * D'autres remarques sur votre programme ?
 
-[COMPLÉTER ICI]
+  - Nous avons pensé à optimiser notre code. En effet, on peut voir que lors de la lecture des instructions, nous venons à chaque fois la traduire en "Instruction". Nous avons remarqué que lorsque nous entrons dans une boucle, notre programme va venir traduire plusieurs fois une même instruction. Nous avons donc pensé que nous pourrions optimiser en créer un tableau qui garde le programme en traduction "Instruction" ce qui permettrait de ne pas perdre de temps à chaque boucle.
 
 * Cochez (en remplaçant `[ ]` par `[x]`) si vous avez :**
-  - [ ] Implémenté l'émulation de toutes les instructions gérées par le rendu 2.
-  - [ ] Implémenté l'émulation de toutes les instructions.
-  - [ ] Tous vos tests qui passent.
-  - [ ] Vérifié que vous tests couvrent toutes les instructions émulées.
-  - [ ] Testé les cas particuliers : valeurs négatives, overflows...
-  - [ ] Testé les cas d'erreur : division par zéro, sauts invalides... _(pas demandé par le sujet)_
+  - [x] Implémenté l'émulation de toutes les instructions gérées par le rendu 2.
+  - [x] Implémenté l'émulation de toutes les instructions.
+  - [x] Tous vos tests qui passent.
+  - [x] Vérifié que vous tests couvrent toutes les instructions émulées.
+  - [x] Testé les cas particuliers : valeurs négatives, overflows...
+  - [x] Testé les cas d'erreur : division par zéro, sauts invalides... _(pas demandé par le sujet)_
   - [ ] Un port fonctionnel de DOOM pour votre émulateur.
 
 * Des retours sur le projet en général ?
 
-[COMPLÉTER ICI]
--->
+  - C'est un projet que nous trouvons très intéressant. En effet, il nous permet de faire un lien entre nos différents cours. Cela rajoute de l'intérêt pour celui-ci. 
+  
+  - Le petit hic que nous pouvons relevé est le manque de claireté et de précision du sujet. Nous avons du comprendre certains détails seuls ou avec l'aide d'autres binômes. 
+
+  - Nous sommes un peu frustré du peu d'instructions que nous avons dû implémenter. En effet, quand on veux tester des programmes, nous pouvons effectuer uniquement des tâches basiques et c'est donc un peu frustrant. Cependant, ça donne encore plus envie de continuer ce projet après le rendu 3, afin d'implémenter plus de choses !
