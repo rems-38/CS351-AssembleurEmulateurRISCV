@@ -1,18 +1,18 @@
 #include <stdint.h>
 
 typedef struct {
-    uint32_t reg[32];
+    int64_t reg[32];
     uint32_t mem[4096];
     uint32_t pc;
     int size;
 } Processor;
 
 typedef struct {
-    int pattern;
-    int result;
-    int ope1;
-    int ope2;
-    int settings;
+    int64_t pattern;
+    int64_t result;
+    int64_t ope1;
+    int64_t ope2;
+    int64_t settings;
 } Instruction;
 
 /*

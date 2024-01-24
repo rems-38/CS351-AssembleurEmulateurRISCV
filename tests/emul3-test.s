@@ -1,3 +1,4 @@
+li a4, -42
 li a7, 50
 li s1, 25
 
@@ -10,5 +11,6 @@ addi s1, zero, 0
 
 # EXPECTED
 # sp : 16384
+# a4 : -42
 # a7 : 25
 # s1 : 0
