@@ -4,7 +4,7 @@ li a0, 0
 li s1, 5
 
 # loop:
-beq t2, zero, 12
+beq t2, zero, 16
 add a0, a0, s1
 addi t2, t2, -1
 j -12

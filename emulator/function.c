@@ -79,31 +79,34 @@ Instruction decode_instr(uint32_t word) {
     return instr;
 }
 
-void execute_instr(Processor *cpu, Instruction instr) {
-    if (instr.pattern == 0) {
+void execute_instr(Processor *cpu, Instruction instr, int *incr_pc) {
+    *incr_pc = 1;
+    if (instr.pattern == 0 && instr.result != 0) {
         if (instr.settings == 2) cpu->reg[instr.result] = cpu->reg[instr.ope1] + instr.ope2;
         else cpu->reg[instr.result] = cpu->reg[instr.ope1] + instr.settings * cpu->reg[instr.ope2];
     }
     else if (instr.pattern == 1) {
-        if (instr.settings == 0) cpu->reg[instr.result] = cpu->mem[(cpu->reg[instr.ope1] + instr.ope2) / 4]; 
+        if (instr.settings == 0 && instr.result != 0) cpu->reg[instr.result] = cpu->mem[(cpu->reg[instr.ope1] + instr.ope2) / 4]; 
         else if (instr.settings == 1) cpu->mem[(cpu->reg[instr.ope1] + instr.ope2) / 4] = cpu->reg[instr.result];
     }
     else if (instr.pattern == 2) {
-        if (instr.settings == 0) { if (cpu->reg[instr.ope1] == cpu->reg[instr.ope2]) cpu->pc += instr.result / 4; }
-        else if (instr.settings == 1) { if (cpu->reg[instr.ope1] != cpu->reg[instr.ope2]) cpu->pc += instr.result / 4; }
-        else if (instr.settings == 2) { if (cpu->reg[instr.ope1] < cpu->reg[instr.ope2]) cpu->pc += instr.result / 4; }
-        else if (instr.settings == 3) { if (cpu->reg[instr.ope1] >= cpu->reg[instr.ope2]) cpu->pc += instr.result / 4; }
+        if (instr.settings == 0) { if (cpu->reg[instr.ope1] == cpu->reg[instr.ope2]) { cpu->pc += instr.result / 4; *incr_pc = 0; } }
+        else if (instr.settings == 1) { if (cpu->reg[instr.ope1] != cpu->reg[instr.ope2]) { cpu->pc += instr.result / 4; *incr_pc = 0; } }
+        else if (instr.settings == 2) { if (cpu->reg[instr.ope1] < cpu->reg[instr.ope2]) { cpu->pc += instr.result / 4; *incr_pc = 0; } }
+        else if (instr.settings == 3) { if (cpu->reg[instr.ope1] >= cpu->reg[instr.ope2]) { cpu->pc += instr.result / 4; *incr_pc = 0; } }
     }
     else if (instr.pattern == 3) {
+        *incr_pc = 0;
         if (instr.result != 0) cpu->reg[instr.result] = (cpu->pc + 1) * 4; // jal x0, imm (on ne save rien dans x0)
-        cpu->pc += (instr.ope2 / 4) - 1; // on soustrait 1 car on incrémente pc à la fin de emulate_prog
+        cpu->pc += (instr.ope2 / 4);
     }
 }
 
 void emulate_prog(Processor *cpu) {
+    int incr_pc = 1;
     while(cpu->mem[cpu->pc] != 0) {
-        execute_instr(cpu, decode_instr(cpu->mem[cpu->pc]));
-        cpu->pc++;
+        execute_instr(cpu, decode_instr(cpu->mem[cpu->pc]), &incr_pc);
+        if (incr_pc) cpu->pc++;
     }
 }
 
