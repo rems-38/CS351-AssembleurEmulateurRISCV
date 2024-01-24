@@ -2,8 +2,38 @@
 #include <stdint.h>
 #include "function.h"
 
+char *remove_spaces(char *str) {
+    char *new_str = malloc(strlen(str) * sizeof(char));
+    int j = 0;
+    int first_word = 1;
+    int start_of_line = 1;
+    for (int i = 0; i < strlen(str); i++) {
+        if (str[i] == ' ') {
+            if (start_of_line) continue;
+            if (first_word) {
+                new_str[j] = str[i];
+                j++;
+                first_word = 0;
+            }
+        } else if (str[i] == '#') {
+            new_str[j] = '\n';
+            j++;
+            break;
+        } else {
+            new_str[j] = str[i];
+            j++;
+            if (start_of_line) start_of_line = 0;
+        }
+    }
+    new_str[j] = '\0';
+    return new_str;
+}
+
 char **parse_string(char *str, int *nb_word) {
     *nb_word = 5;
+
+    // Suppression des espaces
+    char *nstr = remove_spaces(str);
 
     // Allocation de la mémoire
     char **tab = malloc(*nb_word * sizeof(char *));
@@ -14,19 +44,19 @@ char **parse_string(char *str, int *nb_word) {
     // Remplissage du tableau
     int j = 0, k = 0;
     int inversion = 0;
-    for(int i = 0; *(str + i) != '\0'; i++) {
-        if(*(str + i) == ' ' || *(str + i) == ',' || *(str + i) == '\n' || *(str + i) == '(') {
-            if (*(str + i) == '(') inversion = 1; // pour après
+    for(int i = 0; *(nstr + i) != '\0'; i++) {
+        if(*(nstr + i) == ' ' || *(nstr + i) == ',' || *(nstr + i) == '\n' || *(nstr + i) == '(') {
+            if (*(nstr + i) == '(') inversion = 1; // pour après
             *(tab[j] + k) = '\0';
-            if (*(str + i + 1) == ' ') i++; // pour ", "
+            if (*(nstr + i + 1) == ' ') i++; // pour ", "
             j++;
             k = 0;
-        } else if (*(str + i) == ')') {
+        } else if (*(nstr + i) == ')') {
             *(tab[j] + k) = '\0';
             j++;
             k = 0;
         } else {
-            *(tab[j] + k) = *(str + i);
+            *(tab[j] + k) = *(nstr + i);
             k++;
         }
     }
@@ -37,6 +67,9 @@ char **parse_string(char *str, int *nb_word) {
         tab[j-2] = tab[j-3];
         tab[j-3] = tmp;
     }
+
+    // Libération de la mémoire
+    free(nstr);
 
     return tab;
 }

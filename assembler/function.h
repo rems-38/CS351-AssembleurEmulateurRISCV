@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+char *remove_spaces(char *str);
 char **parse_string(char *str, int *nb_word);
 char **get_infos(char *str, char *types[13][5]);
 void write_output(char *data, uint32_t *output, int start, int length);

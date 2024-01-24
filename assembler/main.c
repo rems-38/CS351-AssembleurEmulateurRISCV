@@ -30,10 +30,13 @@ int main(int argc, char **argv) {
     int nb_word = 0;
 
     while ((ch = getline(&line, &bufsize, finput)) != (size_t)EOF) {
-        if (*line != '#' && *line != ' ' && *line != '\n') {
+        if (*line != '#' && *line != '\n') {
             tab = parse_string(line, &nb_word);
             infos = get_infos(tab[0], types);
-            if (infos[0] == NULL) { fprintf(foutput, "%.8d\n", 0); }
+            if (infos[0] == NULL) {
+                // fprintf(foutput, "%.8d\n", 0);
+                // pour les tests il ne faut pas mettre de 0 sinon ça compte une instruction en plus de ce que le programme attends je crois
+            }
             else {
                 output = 0;
                 if (strcmp(infos[0], "P") == 0) pseudo_replace(tab, infos, types, &nb_word);
@@ -46,7 +49,7 @@ int main(int argc, char **argv) {
                 free(tab);
                 nb_word = 0;
 
-                fprintf(foutput, "%08x\n", output);
+                if (output != 0) fprintf(foutput, "%08x\n", output);
             }
         }
     }
